@@ -18,12 +18,14 @@ public class UserDto {
 	private String address;
 
 	private String role;
+	
+	private String type;
 
 	public UserDto() {
 		super();
 	}
 
-	public UserDto(int userid, String name, String email, String phone, String password, String address,String role) {
+	public UserDto(int userid, String name, String email, String phone, String password, String address,String role,String type) {
 		super();
 		this.userid = userid;
 		this.name = name;
@@ -32,6 +34,17 @@ public class UserDto {
 		this.password = password;
 		this.address = address;
 		this.role = role;
+		this.type = type;
+	}
+	
+	
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
 	}
 
 	public String getRole() {
@@ -92,9 +105,10 @@ public class UserDto {
 
 	@Override
 	public String toString() {
-		return "Users [userid=" + userid + ", name=" + name + ", email=" + email + ", phone=" + phone + ", password="
-				+ password + ", address=" + address + ", role=" + role + "]";
+		return "UserDto [userid=" + userid + ", name=" + name + ", email=" + email + ", phone=" + phone + ", password="
+				+ password + ", address=" + address + ", role=" + role + ", type=" + type + "]";
 	}
+
 
 
 

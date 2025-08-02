@@ -28,7 +28,7 @@ export default function SignUpModal({ isOpen, onClose, role }) {
     const roleData =
       role === "Service Center"
         ? { ...formData, type: formData.type ,role:role.toLowerCase() }
-        : {formData,role:role.toLowerCase()}; // ensure role is in lowercase
+        : {...formData,role:role.toLowerCase()}; // ensure role is in lowercase
 
     try {
       const response = await axios.post(
@@ -159,7 +159,7 @@ export default function SignUpModal({ isOpen, onClose, role }) {
               </label>
               <select
                 name="type"
-                value={formData.type || ""}
+                value={formData.type}
                 onChange={handleChange}
                 required
                 className="w-full border border-gray-300 p-2 rounded"

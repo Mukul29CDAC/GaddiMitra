@@ -25,8 +25,8 @@ public class Customer extends Users {
 
 
 
-	public Customer(List<VeichleRequest> veichlerequest) {
-		super();
+	public Customer(int userid, String name, String email, String phone, String password, String address,String role,List<VeichleRequest> veichlerequest) {
+		super(userid,name,email,phone,password,address,role);
 		this.veichlerequest = veichlerequest;
 	}
 
