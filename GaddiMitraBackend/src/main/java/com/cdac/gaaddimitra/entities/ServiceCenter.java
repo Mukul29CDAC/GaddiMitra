@@ -29,8 +29,8 @@ public class ServiceCenter extends Users{
 		super();
 	}
 
-	public ServiceCenter(String type) {
-		super();
+	public ServiceCenter(int userid, String name, String email, String phone, String password, String address,String role,String type) {
+		super(userid,name,email,phone,password,address,role);
 		this.type = type;
 	}
 

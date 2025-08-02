@@ -12,9 +12,14 @@ import jakarta.persistence.Table;
 @Entity
 public class Dealer extends Users {
 	
-
+	
+	
 	public Dealer() {
 		super();
+	}
+
+	public Dealer(int userid, String name, String email, String phone, String password, String address,String role) {
+		super(userid,name,email,phone,password,address,role);
 	}
 
 	@Override
