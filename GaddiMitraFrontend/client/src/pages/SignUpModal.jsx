@@ -10,6 +10,8 @@ export default function SignUpModal({ isOpen, onClose, role }) {
     password: "",
     address: "",
     // imageData: null, // for storing image file
+    // ensure role is in lowercase
+  
   });
 
   if (!isOpen) return null;
@@ -21,20 +23,16 @@ export default function SignUpModal({ isOpen, onClose, role }) {
     }));
   };
 
-  // const handleImageChange = (e) => {
-  //   setFormData((prev) => ({ ...prev, imageData: e.target.files[0] }));
-  // }; 
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     const roleData =
       role === "Service Center"
-        ? { ...formData, type: formData.type }
-        : formData;
+        ? { ...formData, type: formData.type ,role:role.toLowerCase() }
+        : {formData,role:role.toLowerCase()}; // ensure role is in lowercase
 
     try {
       const response = await axios.post(
-        `http://localhost:8080/register/${role.toLowerCase()}`,
+        `http://localhost:8080/user/register`,
         roleData
       ); // replace with your real endpoint
     

@@ -1,90 +1,37 @@
 package com.cdac.gaaddimitra.entitiesDTO;
 
+import java.util.List;
+
 import org.springframework.stereotype.Component;
 
+import com.cdac.gaaddimitra.entities.VeichleRequest;
+
 @Component
-public class CustomerDto {
-	private int customerid;
-	
-	private String name;
+public class CustomerDto extends UserDto{
 	
 
-	private String email;
-	
-
-	private String phone;
-	
-	private String address;
-	
-	
-	private String password;
-	
 	public CustomerDto() {
 		super();
 	}
-
-	public CustomerDto(int customerid, String name, String email, String phone, String address, String password) {
-		super();
-		this.customerid = customerid;
-		this.name = name;
-		this.email = email;
-		this.phone = phone;
-		this.address = address;
-		this.password = password;
+	
+	public CustomerDto(int id, String name, String email,String password, String phone, String address,String role) {
+		super(id,name,email,password,phone,address,role);
+		
 	}
+	
+	private List<VeichleRequest> veichlerequest;
 
-
-	public int getCustomerid() {
-		return customerid;
+	public List<VeichleRequest> getVeichlerequest() {
+		return veichlerequest;
 	}
-
-	public void setCustomerid(int customerid) {
-		this.customerid = customerid;
+	
+	public void setVeichlerequest(List<VeichleRequest> veichlerequest) {
+		this.veichlerequest = veichlerequest;
 	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
-	public String getPhone() {
-		return phone;
-	}
-
-	public void setPhone(String phone) {
-		this.phone = phone;
-	}
-
-	public String getAddress() {
-		return address;
-	}
-
-	public void setAddress(String address) {
-		this.address = address;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
+	
 	@Override
 	public String toString() {
-		return "Customer [customerid=" + customerid + ", name=" + name + ", email=" + email + ", phone=" + phone
-				+ ", address=" + address + ", password=" + password + "]";
+		return "CustomerDto [veichlerequest=" + veichlerequest + "]";
 	}
+	
 }

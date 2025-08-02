@@ -16,6 +16,7 @@ import com.cdac.gaaddimitra.entities.Quotation;
 import com.cdac.gaaddimitra.entitiesDTO.QuotationDto;
 //import com.cdac.gaaddimitra.entities.Notification;
 import com.cdac.gaaddimitra.entitiesDTO.ServiceCenterDto;
+import com.cdac.gaaddimitra.entitiesDTO.UserDto;
 import com.cdac.gaaddimitra.repository.VeichleRepo;
 import com.cdac.gaaddimitra.services.QuotationServiceIntf;
 import com.cdac.gaaddimitra.servicesimpl.QuotationServiceImpl;
@@ -28,33 +29,12 @@ public class ServiceCenterController {
 	@Autowired
 	ServiceCenterImpl serviceCenter;
 	
-	@Autowired
-	QuotationServiceImpl serviceQuot;
-	
-
 	
 	@GetMapping("/servicecenter/allcenters")
-	public List<ServiceCenterDto> getAllCenters(){
+	public List<UserDto> getAllCenters(){
 		return serviceCenter.getAllServiceCenter();
 	}
-	
-	@PostMapping("/register/servicecenter")
-	public String addServiceCenter(@RequestBody ServiceCenterDto obj) {
-		serviceCenter.addServiceCenter(obj);
-		return "ObjectAdded";
-	}
-//	
-//	@GetMapping("/servicecenter/getNotify")
-//	public void sendNotification(@RequestBody Notification msg) {
-//		System.out.println(msg);
-//	}
-//	
-//	@PostMapping("/servicecenter/sendQuotataion")
-//	public void sendQuoatation(@RequestBody QuotationDto quotation) {
-//		serviceQuot.addQuotation(quotation);
-////		new RestTemplate().postForEntity("http://localhost:8080/customer/getQuotation", quotation, QuotationDto.class);
-//	}
-//	
+
 	
 	
 }

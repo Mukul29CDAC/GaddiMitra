@@ -3,51 +3,34 @@ package com.cdac.gaaddimitra.servicesimpl;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.cdac.gaaddimitra.entities.Dealer;
-import com.cdac.gaaddimitra.entitiesDTO.DealerDto;
-import com.cdac.gaaddimitra.repository.DealerRepo;
-import com.cdac.gaaddimitra.services.DealerServiceIntf;
-
+import com.cdac.gaaddimitra.entities.Users;
+import com.cdac.gaaddimitra.entitiesDTO.UserDto;
+import com.cdac.gaaddimitra.repository.UserRepository;
 
 @Service
-public class DealerServiceImpl implements DealerServiceIntf{
-	
+public class DealerServiceImpl {
+
+
 	@Autowired
-	DealerRepo repoDealer;
-
-	@Override
-	public void addDealer(DealerDto objDto) {
-		Dealer objDealer = new Dealer();
-		BeanUtils.copyProperties(objDto, objDealer);
-		repoDealer.save(objDealer);	
-	}
-
-	@Override
-	public List<DealerDto> getAllDealers() {
-		List<DealerDto> allDealers = new ArrayList<>();
-		Iterator<Dealer> itr = repoDealer.findAll().iterator();
+	UserRepository repo;
+	
+	public List<UserDto> getAllDealers(){
+		List<UserDto> dealers = new ArrayList<>();
+		Iterator<Users> usr = repo.findByRole("dealer").iterator();
 		
-		while(itr.hasNext()) {
-			DealerDto proxy = new DealerDto();
-			BeanUtils.copyProperties(itr.next(), proxy);
-			allDealers.add(proxy);
+		while(usr.hasNext()) {
+			UserDto dto = new UserDto();
+			BeanUtils.copyProperties(usr, dto);
+			dealers.add(dto);
 		}
-		return allDealers;
-	}
-
-	@Override
-	public DealerDto getOneDealer(int id) {
 		
-		Optional<Dealer> obj = repoDealer.findById(id);
-		DealerDto proxy = new DealerDto();
-		BeanUtils.copyProperties(obj.get(),proxy);
-		return proxy;
+		return dealers;
+		
+		
 	}
-
 }

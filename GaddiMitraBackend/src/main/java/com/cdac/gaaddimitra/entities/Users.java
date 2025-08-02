@@ -1,29 +1,43 @@
-package com.cdac.gaaddimitra.entitiesDTO;
+package com.cdac.gaaddimitra.entities;
 
-import org.springframework.stereotype.Component;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
-@Component
-public class UserDto {
-
+@Entity
+@Table(name = "users")
+public class Users {
+	
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int userid;
 	
+	@Column(name = "name")
 	private String name;
 	
+	@Column(name = "email")
 	private String email;
-
+	
+	@Column(name = "phone")
 	private String phone;
-
+	
+	@Column(name = "password")
 	private String password;
-
+	
+	@Column(name = "address")
 	private String address;
-
+	
+	@Column(name = "role")
 	private String role;
 
-	public UserDto() {
+	public Users() {
 		super();
 	}
 
-	public UserDto(int userid, String name, String email, String phone, String password, String address,String role) {
+	public Users(int userid, String name, String email, String phone, String password, String address,String role) {
 		super();
 		this.userid = userid;
 		this.name = name;
@@ -96,7 +110,7 @@ public class UserDto {
 				+ password + ", address=" + address + ", role=" + role + "]";
 	}
 
-
-
+	
+	
 
 }

@@ -6,93 +6,20 @@ import org.springframework.stereotype.Component;
 
 
 @Component
-public class ServiceCenterDto {
+public class ServiceCenterDto extends UserDto{
 	
-	private int Servicecenterid;
-	
-	
-	private String name;
-	
-
-	private String email;
-	
-	
-	private String phone;
-	
-	
-	private String address;
-	
-	
-	private String password;
-	
-	
-//	private ServiceCenterType type;
 	private String type;
 
 	public ServiceCenterDto() {
 		super();
 	}
 
-	public ServiceCenterDto(int servicecenterid, String name, String email, String phone, String address, String password,
-			String type) {
-		super();
-		Servicecenterid = servicecenterid;
-		this.name = name;
-		this.email = email;
-		this.phone = phone;
-		this.address = address;
-		this.password = password;
-		this.type = type;
+	
+	public ServiceCenterDto(int id, String name, String email,String password, String phone, String address,String role,String type) {
+		super(id,name,email,password,phone,address,role);
+		this.type = type;	
 	}
-
-	public int getServicecenterid() {
-		return Servicecenterid;
-	}
-
-	public void setServicecenterid(int servicecenterid) {
-		Servicecenterid = servicecenterid;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
-	public String getPhone() {
-		return phone;
-	}
-
-	public void setPhone(String phone) {
-		this.phone = phone;
-	}
-
-	public String getAddress() {
-		return address;
-	}
-
-	public void setAddress(String address) {
-		this.address = address;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
+	
 	public String getType() {
 		return type;
 	}
@@ -103,9 +30,9 @@ public class ServiceCenterDto {
 
 	@Override
 	public String toString() {
-		return "ServiceCenter [Servicecenterid=" + Servicecenterid + ", name=" + name + ", email=" + email + ", phone="
-				+ phone + ", address=" + address + ", password=" + password + ", type=" + type + "]";
+		return "ServiceCenterDto [type=" + type + "]";
 	}
+ 
 	
 	
 }

@@ -10,49 +10,30 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.cdac.gaaddimitra.entities.ServiceCenter;
+import com.cdac.gaaddimitra.entities.Users;
 import com.cdac.gaaddimitra.entitiesDTO.ServiceCenterDto;
+import com.cdac.gaaddimitra.entitiesDTO.UserDto;
 import com.cdac.gaaddimitra.repository.ServiceCenterRepo;
+import com.cdac.gaaddimitra.repository.UserRepository;
 import com.cdac.gaaddimitra.services.ServiceCenterIntf;
 
 
 @Service
-public class ServiceCenterImpl implements ServiceCenterIntf{
+public class ServiceCenterImpl {
 	
 	@Autowired
-	ServiceCenterRepo serviceRepo;
-	
-	@Autowired
-	ServiceCenterDto proxyCenter;
-	
-	@Override
-	public void addServiceCenter(ServiceCenterDto objDTO) {
-		ServiceCenter obj = new ServiceCenter();
-		BeanUtils.copyProperties(objDTO, obj);
-		serviceRepo.save(obj);
-	}
+	UserRepository repo;
 
-	@Override
-	public List<ServiceCenterDto> getAllServiceCenter() {
+	public List<UserDto> getAllServiceCenter(){
+		List<UserDto> centers = new ArrayList<>();
+		Iterator<Users> usr = repo.findByRole("servicecenter").iterator();
 		
-		List<ServiceCenterDto> allCenters = new ArrayList<>();
- 		Iterator<ServiceCenter> itr =  serviceRepo.findAll().iterator();
-		
-		while(itr.hasNext()) {
-			BeanUtils.copyProperties(itr.next(),proxyCenter);
-			allCenters.add(proxyCenter);
+		while(usr.hasNext()) {
+			UserDto dto = new UserDto();
+			BeanUtils.copyProperties(usr, dto);
+			centers.add(dto);
 		}
-		
-		return allCenters;
-		
+		return centers;
 	}
 	
-	@Override
-	public ServiceCenterDto getOneCenter(int id) {
-		
-		Optional<ServiceCenter> center = serviceRepo.findById(id);
-		BeanUtils.copyProperties(center.get(),proxyCenter);
-		return proxyCenter;
-	}
-
-
 }

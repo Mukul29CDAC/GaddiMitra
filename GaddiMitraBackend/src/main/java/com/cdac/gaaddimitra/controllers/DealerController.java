@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cdac.gaaddimitra.entitiesDTO.DealerDto;
+import com.cdac.gaaddimitra.entitiesDTO.UserDto;
 import com.cdac.gaaddimitra.servicesimpl.DealerServiceImpl;
 
 @CrossOrigin(origins = "*")
@@ -21,20 +22,10 @@ public class DealerController {
 	DealerServiceImpl serviceDealer;
 		
 	@GetMapping("dealers/alldealers")
-	public List<DealerDto> getAllDealers(){
+	public List<UserDto> getAllDealers(){
 	
 		return serviceDealer.getAllDealers();
 	}
-	
-	@PostMapping("register/dealer")
-	public String addDealer(@RequestBody DealerDto obj) {	
-		serviceDealer.addDealer(obj);
-		return "Dealer Added";
-	}
-	
-	@GetMapping("dealers/getonedealer/{id}")
-	public DealerDto getDealer(@PathVariable int id) {
-		return serviceDealer.getOneDealer(id);
-	}
-	
+
+
 }

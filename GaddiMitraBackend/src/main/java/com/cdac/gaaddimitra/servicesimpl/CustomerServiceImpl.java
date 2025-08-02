@@ -8,36 +8,30 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.cdac.gaaddimitra.entities.Customer;
-import com.cdac.gaaddimitra.entitiesDTO.CustomerDto;
-import com.cdac.gaaddimitra.repository.CustomerRepo;
-import com.cdac.gaaddimitra.services.CustomerIntf;
+import com.cdac.gaaddimitra.entities.Users;
+import com.cdac.gaaddimitra.entitiesDTO.UserDto;
+import com.cdac.gaaddimitra.repository.UserRepository;
 
 
 @Service
-public class CustomerServiceImpl implements CustomerIntf {
+public class CustomerServiceImpl {
 
 	@Autowired
-	CustomerRepo repoCust;
+	UserRepository repo;
 	
-	@Override
-	public void addCustomer(CustomerDto obj) {
-		Customer cust = new Customer();
-		BeanUtils.copyProperties(obj, cust);
-		repoCust.save(cust);
-	}
-
-	@Override
-	public List<CustomerDto> getAllCustomers() {
+	public List<UserDto> getAllCustomers(){
+		List<UserDto> customer = new ArrayList<>();
+		Iterator<Users> usr = repo.findByRole("customer").iterator();
 		
-		List<CustomerDto> proxylist = new ArrayList();
-		Iterator<Customer> itr = repoCust.findAll().iterator();
-		
-		while(itr.hasNext()) {
-			CustomerDto proxyObj =  new CustomerDto();
-			BeanUtils.copyProperties(itr.next(), proxyObj);	
+		while(usr.hasNext()) {
+			UserDto dto = new UserDto();
+			BeanUtils.copyProperties(usr, dto);
+			customer.add(dto);
 		}
-		return proxylist;
+		
+		return customer;
+		
+		
 	}
-
+	
 }
