@@ -46,7 +46,7 @@ export const queryClient = new QueryClient({
 
         if (key === "/api/vehicles+users") {
           // You’re asking for both
-          const [vehicles, request, totalVehicles, totalRequest,totalQuotation,notification] = await apiRequestMultiple([
+          const [Vehicles, request, totalVehicles, totalRequest,totalQuotation,notification] = await apiRequestMultiple([
            
             "http://localhost:8080/veichles/allVeichles",
             "http://localhost:8080/requests/showallrequests",
@@ -56,7 +56,7 @@ export const queryClient = new QueryClient({
             "http://localhost:8080/getNotification"
 
           ]);
-          return { vehicles, request ,totalVehicles, totalRequest,totalQuotation,notification};
+          return { Vehicles, request ,totalVehicles, totalRequest,totalQuotation,notification};
         }
 
         // fallback to mock

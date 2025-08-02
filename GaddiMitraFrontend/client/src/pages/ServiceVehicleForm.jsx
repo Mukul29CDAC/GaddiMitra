@@ -2,18 +2,19 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Header from "../components/layout/header";
+import { useAuth } from "../context/AuthContext.jsx";
 
 export default function ServiceVehicleForm() {
+  const {user} = useAuth();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    customerid: "",
     requesttype: "service",
     veichletype: "",
     brand: "",
     model: "",
-    // datetime: new Date().toISOString().slice(0, 16), // format for datetime-local
     description: "",
     status: "pending",
+    imageData: null,
   });
 
   const handleChange = (e) => {
@@ -21,10 +22,23 @@ export default function ServiceVehicleForm() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+    const handleImageChange = (e) => {
+    setFormData((prev) => ({ ...prev, imageData: e.target.files[0]
+
+     }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+       const payload = new FormData();
+
+  payload.append("obj", new Blob([JSON.stringify({...formData,customerid:user.userid})], { type: "application/json" }));
+  payload.append("image", formData.imageData);
     try {
-      await axios.post("http://localhost:8080/requests/addRequest", formData);
+      await axios.post("http://localhost:8080/requests/addRequest", payload,{
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },});
       alert("Vehicle request submitted successfully!");
       navigate("/dashboard");
     } catch (err) {
@@ -42,17 +56,6 @@ export default function ServiceVehicleForm() {
         </h2>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block font-medium text-gray-700">Customer ID</label>
-            <input
-              type="number"
-              name="customerid"
-              required
-              value={formData.customerid}
-              onChange={handleChange}
-              className="w-full p-2 border rounded"
-            />
-          </div>
 
           <div>
             <label className="block font-medium text-gray-700">Vehicle Type</label>
@@ -112,6 +115,20 @@ export default function ServiceVehicleForm() {
               value={formData.description}
               onChange={handleChange}
               className="w-full p-2 border rounded"
+            />
+          </div>
+
+            <div>
+            <label className="block mb-1 text-sm font-medium text-gray-700">
+              Image
+            </label>
+            <input
+              type="file"
+              name="imageData"
+              // value={formData.imageData}
+              onChange={handleImageChange}
+              required
+              className="w-full border border-gray-300 p-2 rounded"
             />
           </div>
 
