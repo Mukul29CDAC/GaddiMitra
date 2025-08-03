@@ -1,14 +1,15 @@
 package com.cdac.gaaddimitra.servicesimpl;
 
+import java.io.IOException;
 import java.util.ArrayList;
-
- 
+import java.util.Base64;
 import java.util.Iterator;
 import java.util.List;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.cdac.gaaddimitra.entities.VeichleRequest;
 import com.cdac.gaaddimitra.entitiesDTO.VeichleRequestDto;
@@ -19,7 +20,7 @@ import com.cdac.gaaddimitra.services.VeichleRequestIntf;
 
 
 @Service
-public class VeichleRequestServiceImpl implements VeichleRequestIntf{
+public class VeichleRequestServiceImpl{
 	
 	@Autowired
 	VeichleRequestRepo repoRequest;
@@ -28,30 +29,44 @@ public class VeichleRequestServiceImpl implements VeichleRequestIntf{
 	@Autowired
     private VeichleRequestPublisher publisher;
 
-	@Override
-	public void addRequest(VeichleRequestDto req) {
+
+	public void addRequest(VeichleRequestDto req,MultipartFile image) {
 		VeichleRequest vec = new VeichleRequest();
+		vec.setImagename(image.getOriginalFilename());
+        vec.setImagetype(image.getContentType());
+        try {
+			vec.setImagedata(image.getBytes());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		BeanUtils.copyProperties(req, vec);
 		repoRequest.save(vec);
 		publisher.publish(vec);
 		
 	}
 
-	@Override
+
 	public List<VeichleRequestDto> allRequests() {
 		List<VeichleRequestDto> proxylist = new ArrayList<>();
 		Iterator<VeichleRequest> itr = repoRequest.findAll().iterator();
 		
 		while(itr.hasNext()) {
-			VeichleRequestDto proxyObj =  new VeichleRequestDto();
-			BeanUtils.copyProperties(itr.next(), proxyObj);	
-			proxylist.add(proxyObj);
+			VeichleRequest request = itr.next();
+			VeichleRequestDto dto =  new VeichleRequestDto();
+			BeanUtils.copyProperties(itr.next(), dto);	
+			
+			  if (request.getImagedata() != null) {
+				  dto.setImagedata(Base64.getEncoder().encodeToString(request.getImagedata()));
+		        }
+			
+			proxylist.add(dto);
 		}
 
 		return proxylist;
 	}
 
-	@Override
+
 	public long totalRequests() {
 		// TODO Auto-generated method stub
 		return repoRequest.count();

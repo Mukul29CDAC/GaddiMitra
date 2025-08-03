@@ -31,6 +31,10 @@ public class VeichleRequestDto {
 	private String description;
 	
 	private String status;
+	
+	private String imageurl;
+	
+	private String imagedata;
 ////	
 ////	@ManyToOne
 ////	@JoinColumn(name = "customerid") // Foreign key in orders table
@@ -47,10 +51,13 @@ public class VeichleRequestDto {
 
 	public VeichleRequestDto() {
 		super();
+		this.datetime = LocalDateTime.now();
 	}
 
+
+
 	public VeichleRequestDto(int requestid, int customerid, String requesttype, String veichletype, String brand,
-			String model, String description, String status) {
+			String model, String description, String status, String imageurl, String imagedata, Customer customer) {
 		super();
 		this.requestid = requestid;
 		this.customerid = customerid;
@@ -58,9 +65,11 @@ public class VeichleRequestDto {
 		this.veichletype = veichletype;
 		this.brand = brand;
 		this.model = model;
-		this.datetime = LocalDateTime.now();
 		this.description = description;
 		this.status = status;
+		this.imageurl = imageurl;
+		this.imagedata = imagedata;
+		this.customer = customer;
 	}
 
 	public int getRequestid() {
@@ -135,10 +144,30 @@ public class VeichleRequestDto {
 		this.status = status;
 	}
 
+	public String getImageurl() {
+		return imageurl;
+	}
+
+	public void setImageurl(String imageurl) {
+		this.imageurl = imageurl;
+	}
+
+	public String getImagedata() {
+		return imagedata;
+	}
+
+	public void setImagedata(String imagedata) {
+		this.imagedata = imagedata;
+	}
+
 	@Override
 	public String toString() {
-		return "VeichleRequest [requestid=" + requestid + ", customerid=" + customerid + ", requesttype=" + requesttype
-				+ ", veichletype=" + veichletype + ", brand=" + brand + ", model=" + model + ", datetime=" + datetime
-				+ ", description=" + description + ", status=" + status + "]";
+		return "VeichleRequestDto [requestid=" + requestid + ", customerid=" + customerid + ", requesttype="
+				+ requesttype + ", veichletype=" + veichletype + ", brand=" + brand + ", model=" + model + ", datetime="
+				+ datetime + ", description=" + description + ", status=" + status + ", imageurl=" + imageurl
+				+ ", imagedata=" + imagedata + ", customer=" + customer + "]";
 	}
+	
+	
+
 }
