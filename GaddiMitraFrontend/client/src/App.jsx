@@ -17,6 +17,8 @@ import ServiceCenters from "./pages/ServiceCenters.jsx";
 import BuyVehicleForm from "./pages/ServiceVehicleForm.jsx";
 import ServiceVehicleForm from "./pages/ServiceVehicleForm.jsx";
 import LoginModal from "./pages/LoginModal.jsx";
+import AboutUs from './pages/AboutUs.jsx'
+import LocationPopup from "./components/ui/LocationPopup.jsx";
 
 function Router() {
   // const { isAuthenticated, isLoading } = useAuth();
@@ -36,6 +38,8 @@ function Router() {
             <Route path="/dashboard/request/details" element={<RequestDetails />} />
             <Route path="/dashboard/send-quotation" element={<SendQuotationForm />} />
             <Route path="/dashboard/request/service" element={<ServiceVehicleForm />} />
+          
+            <Route path="/about" element={<AboutUs />} />
             {/* Add other routes as needed */}
             <Route path="*" element={<NotFound />} />
           </Routes>
@@ -51,6 +55,7 @@ function App() {
       <TooltipProvider>
         <Toaster />
         <Router />
+         <LocationPopup /> 
       </TooltipProvider>
     </QueryClientProvider>
   );

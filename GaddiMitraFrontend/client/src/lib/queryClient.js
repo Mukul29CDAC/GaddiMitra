@@ -1,8 +1,6 @@
 import { QueryClient } from "@tanstack/react-query";
-import axios from "axios";
-import { useState } from "react";
 
-
+// Optional mock fallback (only used if API fails or not available)
 const mockDB = {
   "/api/dashboard/stats": {
     totalVehicles: 10,
@@ -34,29 +32,63 @@ const mockDB = {
     email: "mukul@example.com",
     role: "customer",
   },
-
 };
 
+// API utility function
+export async function apiRequestMultiple(urls, options = {}) {
+  try {
+    const responses = await Promise.all(
+      urls.map((url) =>
+        fetch(url, {
+          method: options.method || "GET",
+          headers: {
+            "Content-Type": "application/json",
+            ...(options.headers || {}),
+          },
+          ...options,
+        }).then(async (res) => {
+          if (!res.ok) {
+            const text = await res.text();
+            throw new Error(`Error fetching ${url}:\n${res.status} - ${text}`);
+          }
+          return res.json();
+        })
+      )
+    );
+    return responses;
+  } catch (error) {
+    console.error("❌ API error in apiRequestMultiple:", error);
+    throw error;
+  }
+}
 
+// QueryClient setup
 export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      queryFn: async ({ queryKey}) => {
+      queryFn: async ({ queryKey }) => {
         const key = queryKey[0];
 
         if (key === "/api/vehicles+users") {
-          // You’re asking for both
-          const [vehicles, request, totalVehicles, totalRequest,totalQuotation,notification] = await apiRequestMultiple([
-           
+          const [
+            vehicles,
+            request,
+            totalVehicles,
+            totalRequest,
+            totalQuotation,
+            notification,
+          ] = await apiRequestMultiple([
             "http://localhost:8080/veichles/allVeichles",
-            "http://localhost:8080/requests/showallrequests",
-            "http://localhost:8080/veichles/totalVeichle",
-            "http://localhost:8080/veichleRequest/total",
-            "http://localhost:8080/quotation/totalQuotation",
-            "http://localhost:8080/getNotification"
-
+           
           ]);
-          return { vehicles, request ,totalVehicles, totalRequest,totalQuotation,notification};
+          return {
+            vehicles,
+            request,
+            totalVehicles,
+            totalRequest,
+            totalQuotation,
+            notification,
+          };
         }
 
         // fallback to mock
@@ -66,24 +98,9 @@ export const queryClient = new QueryClient({
 
         throw new Error(`No handler or mock data for ${key}`);
       },
-      staleTime: 1000 * 60 * 5,
+      staleTime: 1000 * 60 * 5, // 5 minutes
+      retry: 1, // retry once on failure
+      refetchOnWindowFocus: false,
     },
   },
 });
-// Optional: utility function to simulate API post/patch
-export async function apiRequestMultiple(urls, options = {}) {
-  const responses = await Promise.all(
-    urls.map(url =>
-      fetch(url, {
-        method: options.method || "GET",
-        ...options,
-      }).then(res => {
-        if (!res.ok) throw new Error(`${res.status}: ${res.statusText}`);
-        return res.json();
-      })
-    )
-  );
-
-  return responses;
-}
-

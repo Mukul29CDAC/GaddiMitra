@@ -1,4 +1,4 @@
-import { useState  } from "react";
+import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "../ui/button.jsx";
 import { Badge } from "../ui/badge.jsx";
@@ -10,7 +10,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu.jsx";
-import { Bell, User, LogOut, Settings, Menu, X } from "lucide-react";
+import { Bell, User, LogOut, Settings, Menu, X, MapPin } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import {
   Select,
@@ -21,18 +21,19 @@ import {
 } from "../ui/select.jsx";
 import LoginModal from "../../pages/LoginModal.jsx";
 import { useAuth } from "../../context/AuthContext.jsx";
+import LocationPopup from "../ui/LocationPopup.jsx";
 
 export default function Header() {
-  const { user, isAuthenticated,logout } = useAuth();
-
+  const { user, isAuthenticated, logout } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
+
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showSignUp, setShowSignUp] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
   const [selectedRole, setSelectedRole] = useState("");
-
-  const navigate = useNavigate();
-  
+  const [showLocationPopup, setShowLocationPopup] = useState(false);
+  const [city, setCity] = useState(localStorage.getItem("city") || "Select City");
 
   const { data: notifications } = useQuery({
     queryKey: ["/api/notifications"],
@@ -55,16 +56,18 @@ export default function Header() {
   const handleLogout = () => {
     navigate("/");
     logout();
-    
-    // setMobileMenuOpen(false);
-    // alert("Logged out successfully.");
   };
 
+  const handleCitySelect = (selectedCity) => {
+    setCity(selectedCity);
+    localStorage.setItem("city", selectedCity);
+  };
 
   return (
     <header className="bg-white shadow-sm sticky top-0 z-50">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
+
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2">
             <div className="bg-orange-600 text-white px-3 py-1 rounded-lg font-bold">GAADDI</div>
@@ -85,6 +88,12 @@ export default function Header() {
               </Link>
             ))}
           </nav>
+
+          {/* Location Selector Button */}
+          <div className="hidden md:flex items-center space-x-2 cursor-pointer" onClick={() => setShowLocationPopup(true)}>
+            <MapPin className="h-5 w-5 text-orange-600" />
+            <span className="font-medium text-gray-700 hover:text-orange-600">{city}</span>
+          </div>
 
           {/* Desktop Auth Section */}
           <div className="hidden md:flex items-center space-x-4">
@@ -130,7 +139,7 @@ export default function Header() {
                       <span>Settings</span>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
-                      <a onClick={() => handleLogout()}className="w-full">
+                      <a onClick={handleLogout} className="w-full">
                         <LogOut className="mr-2 h-4 w-4" />
                         <span>Log out</span>
                       </a>
@@ -169,20 +178,12 @@ export default function Header() {
             <LoginModal isOpen={showLogin} onClose={() => setShowLogin(false)} />
 
             {/* Sign Up Modal */}
-            <SignUpModal
-              isOpen={showSignUp}
-              onClose={() => setShowSignUp(false)}
-              role={selectedRole}
-            />
+            <SignUpModal isOpen={showSignUp} onClose={() => setShowSignUp(false)} role={selectedRole} />
           </div>
 
           {/* Mobile menu button */}
           <div className="md:hidden">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            >
+            <Button variant="ghost" size="sm" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
               {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </Button>
           </div>
@@ -205,11 +206,14 @@ export default function Header() {
                 </Link>
               ))}
 
+              {/* Mobile Location Button */}
+              <Button variant="ghost" onClick={() => setShowLocationPopup(true)}>
+                <MapPin className="h-5 w-5 mr-2 text-orange-600" /> {city}
+              </Button>
+
               {!isAuthenticated && (
                 <div className="flex flex-col space-y-2 pt-4 border-t border-gray-200">
-                  <Button variant="ghost" onClick={() => setShowLogin(true)}>
-                    Login
-                  </Button>
+                  <Button variant="ghost" onClick={() => setShowLogin(true)}>Login</Button>
 
                   <Select onValueChange={(value) => setSelectedRole(value)}>
                     <SelectTrigger className="w-full">
@@ -238,6 +242,13 @@ export default function Header() {
           </div>
         )}
       </div>
+
+      {/* Location Popup */}
+      <LocationPopup
+        show={showLocationPopup}
+        onClose={() => setShowLocationPopup(false)}
+        onSelect={handleCitySelect}
+      />
     </header>
   );
 }
