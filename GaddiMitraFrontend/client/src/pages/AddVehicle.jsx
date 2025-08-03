@@ -18,11 +18,6 @@ export default function AddVehicle() {
     imageData: null
   });
 
-  const formData = new FormData();
-
-  formData.append("obj", new Blob([JSON.stringify(vehicle)], { type: "application/json" }));
-  formData.append("image", vehicle.imageData);
-
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -32,12 +27,12 @@ export default function AddVehicle() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-     const formData = new FormData();
+     const payload = new FormData();
 
-  formData.append("obj", new Blob([JSON.stringify(vehicle)], { type: "application/json" }));
-  formData.append("image", vehicle.imageData);
+  payload.append("obj", new Blob([JSON.stringify(vehicle)], { type: "application/json" }));
+  payload.append("image", vehicle.imageData);
     try {
-      await axios.post("http://localhost:8080/veichles/addVeichle", formData, {
+      await axios.post("http://localhost:8080/veichles/addVeichle", payload, {
       headers: {
         "Content-Type": "multipart/form-data",
       },});

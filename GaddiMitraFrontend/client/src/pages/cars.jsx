@@ -28,7 +28,8 @@ export default function Cars() {
     queryKey: ["/api/vehicles+users"],
   });
 
-  const vehicles = info?.vehicles || [];
+  const vehicles = info?.Vehicles || [];
+
 
   const filteredVehicles = vehicles.filter((vehicle) => {
     const matchesSearch =
