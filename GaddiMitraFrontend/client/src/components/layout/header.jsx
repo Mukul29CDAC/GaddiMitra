@@ -24,7 +24,7 @@ import { useAuth } from "../../context/AuthContext.jsx";
 
 export default function Header() {
   const { user, isAuthenticated,logout } = useAuth();
-  console.log(user);
+
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showSignUp, setShowSignUp] = useState(false);

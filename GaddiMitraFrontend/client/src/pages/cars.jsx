@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "../components/ui/button.jsx";
 import { Input } from "../components/ui/input.jsx";
@@ -17,6 +17,7 @@ import Footer from "../components/layout/footer.jsx";
 
 export default function Cars() {
   const [searchTerm, setSearchTerm] = useState("");
+  
   const [filters, setFilters] = useState({
     priceRange: "",
     fueltype: "",
@@ -24,11 +25,11 @@ export default function Cars() {
     bodytype: "",
   });
 
-  const { data: info, isLoading } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ["/api/vehicles+users"],
   });
 
-  const vehicles = info?.vehicles || [];
+  const vehicles = data?.vehicles || [];
 
   const filteredVehicles = vehicles.filter((vehicle) => {
     const matchesSearch =

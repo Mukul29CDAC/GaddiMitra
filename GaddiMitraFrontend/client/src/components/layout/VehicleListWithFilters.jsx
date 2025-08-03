@@ -21,7 +21,7 @@ export default function VehicleListWithFilters() {
   const fetchVehicles = async () => {
     try {
       const response = await axios.get("http://localhost:8080/veichles/allVeichles");
-      console.log("Fetched vehicles:", response.data);
+      // console.log("Fetched vehicles:", response.data);
       setVehicles(response.data || []);
     } catch (error) {
       console.error("Error fetching vehicles:", error);

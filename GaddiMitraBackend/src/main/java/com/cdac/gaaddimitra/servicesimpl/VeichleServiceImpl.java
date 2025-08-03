@@ -19,13 +19,13 @@ import com.cdac.gaaddimitra.services.VeichleServiceIntf;
 
 
 @Service
-public class VeichleServiceImpl implements VeichleServiceIntf{
+public class VeichleServiceImpl {
 
 	@Autowired
 	VeichleRepo repoVeichle;
 	
 
-	@Override
+	
 	public void addVeichle(VeichleDto obj,MultipartFile image) {
 		Veichles vec = new Veichles();
 	
@@ -43,7 +43,7 @@ public class VeichleServiceImpl implements VeichleServiceIntf{
 		
 	}
 
-	@Override
+
 	public List<VeichleDto> getAllVeichle() {
 	    List<VeichleDto> list = new ArrayList<>();
 	    Iterator<Veichles> itr = repoVeichle.findAll().iterator();
@@ -65,13 +65,11 @@ public class VeichleServiceImpl implements VeichleServiceIntf{
 
 
 
-	
-	@Override
+
 	public int totalVeichle() {
 		return (int) repoVeichle.count();
 	}
 
-	@Override
 	public void deleteVeichle(int id) {
 		// TODO Auto-generated method stub
 		Optional<Veichles> vec = repoVeichle.findById(id);

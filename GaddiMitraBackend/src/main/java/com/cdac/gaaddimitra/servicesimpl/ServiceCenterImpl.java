@@ -30,11 +30,11 @@ public class ServiceCenterImpl {
 		List<UserDto> centers = new ArrayList<>();
 		Iterator<Users> usr = repo.findByRole("servicecenter").iterator();
 		
-		while(usr.hasNext()) {
-			UserDto dto = new UserDto();
-			BeanUtils.copyProperties(usr, dto);
-			centers.add(dto);
-		}
+//		while(usr.hasNext()) {
+//			UserDto dto = new UserDto();
+//			BeanUtils.copyProperties(usr.next(), dto);
+//			centers.add(dto);
+//		}
 		return centers;
 	}
 	
