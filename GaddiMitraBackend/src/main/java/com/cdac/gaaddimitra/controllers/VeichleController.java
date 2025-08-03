@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import com.cdac.gaaddimitra.entitiesDTO.VeichleDto;
 import com.cdac.gaaddimitra.servicesimpl.VeichleServiceImpl;
@@ -52,5 +53,13 @@ public class VeichleController {
 		
 		return "deleted";
 		
+	}
+	
+	@GetMapping("/veichles/veichleDetails/{id}")
+	public ResponseEntity<VeichleDto> getVechicleDetails(@PathVariable int id) {
+		VeichleDto vehicleDto = serviceVeichle.getVeichleDetails(id);
+		if(vehicleDto == null)
+			return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
+	    return new ResponseEntity<>(vehicleDto, HttpStatus.OK);
 	}
 }

@@ -79,5 +79,24 @@ public class VeichleServiceImpl {
 		
 		
 	}
+	
+	public VeichleDto getVeichleDetails(int id) {
+		
+		Optional<Veichles> veichleOpt = repoVeichle.findById(id);
+		if (!veichleOpt.isPresent()) {
+	        throw new RuntimeException("Vehicle not found with id: " + id);
+	    }
+		
+		Veichles veichle = veichleOpt.get();
+		
+		VeichleDto vech = new VeichleDto();
+		
+		BeanUtils.copyProperties(veichle, vech);
 
+        if (veichle.getImagedata() != null) {
+            vech.setImagedata(Base64.getEncoder().encodeToString(veichle.getImagedata()));
+        }
+        
+        return vech;
+	}
 }
