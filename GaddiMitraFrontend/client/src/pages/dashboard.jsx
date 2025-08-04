@@ -25,6 +25,7 @@ export default function Dashboard() {
   const { user } = useAuth();
 
   const { data: stats } = useQuery({ queryKey: ["/api/dashboard/stats"] });
+
    const { data: info } = useQuery({
     queryKey: ["/api/vehicles+users", user?.userid], // Pass userid here for the API call
     enabled: !!user?.userid // Only enable if user.userid is available
@@ -33,6 +34,7 @@ export default function Dashboard() {
   const vehicles = info?.vehicles || [];
   const requests = info?.request || [];
   console.log(info?.request);
+
 
   const roleColors = {
     customer: "bg-blue-100 text-blue-800",

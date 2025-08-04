@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.cdac.gaaddimitra.entitiesDTO.VeichleDto;
 //import com.cdac.gaaddimitra.entities.VeichleRequest;
 import com.cdac.gaaddimitra.entitiesDTO.VeichleRequestDto;
 //import com.cdac.gaaddimitra.observer.VeichleRequestPublisher;
@@ -26,6 +27,7 @@ public class VeichleRequestController {
 	@Autowired
 	VeichleRequestServiceImpl service;
 	
+
     @GetMapping("/requests/showallrequests/{id}")
     public ResponseEntity<List<VeichleRequestDto>> allRequest(@PathVariable int id) {
         System.out.println("Controller: Fetching all requests for customer ID: " + id);
@@ -37,6 +39,7 @@ public class VeichleRequestController {
     }
     
     
+
 	@PostMapping("requests/addRequest")
 	public String addRequest(@RequestPart("obj") VeichleRequestDto vec,
 			@RequestPart("image") MultipartFile image) {
@@ -47,5 +50,15 @@ public class VeichleRequestController {
 	@GetMapping("/veichleRequest/total")
 	public long totalRequest() {
 		return service.totalRequests();
+	}
+	
+	// requests for a service center
+	@GetMapping("/requests/getAllServiceRequests")
+	public ResponseEntity<List<VeichleRequestDto>> getServiceRequests() {
+		List<VeichleRequestDto> veichleRequests = service.getAllServiceRequest();
+		if (veichleRequests.isEmpty()) {
+			return ResponseEntity.noContent().build();
+		}
+		return ResponseEntity.ok(veichleRequests);
 	}
 }
