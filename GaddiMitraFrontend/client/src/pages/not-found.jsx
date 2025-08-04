@@ -1,4 +1,5 @@
-import { Link } from "wouter";
+
+import { Link } from "react-router-dom";
 import { Button } from "../components/ui/button.jsx";
 
 export default function NotFound() {
@@ -10,7 +11,7 @@ export default function NotFound() {
         <p className="text-gray-600 mb-8 max-w-md">
           The page you're looking for doesn't exist or has been moved.
         </p>
-        <Link href="/">
+        <Link to="/">
           <Button>Go Home</Button>
         </Link>
       </div>

@@ -23,6 +23,9 @@ import LoginModal from "../../pages/LoginModal.jsx";
 import { useAuth } from "../../context/AuthContext.jsx";
 import LocationPopup from "../ui/LocationPopup.jsx";
 
+// You'll need to import your new NotifyPop component here
+import NotifyPop from '../../pages/Notification.jsx';
+
 export default function Header() {
   const { user, isAuthenticated, logout } = useAuth();
   const location = useLocation();
@@ -63,11 +66,17 @@ export default function Header() {
     localStorage.setItem("city", selectedCity);
   };
 
+ const [showNotificationModal, setShowNotificationModal] = useState(false);
+
+const handleNotificationsClick = () => {
+  setShowNotificationModal(true);
+};
+
+
   return (
     <header className="bg-white shadow-sm sticky top-0 z-50">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
-
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2">
             <div className="bg-orange-600 text-white px-3 py-1 rounded-lg font-bold">GAADDI</div>
@@ -89,19 +98,22 @@ export default function Header() {
             ))}
           </nav>
 
-          {/* Location Selector Button */}
-          <div className="hidden md:flex items-center space-x-2 cursor-pointer" onClick={() => setShowLocationPopup(true)}>
-            <MapPin className="h-5 w-5 text-orange-600" />
-            <span className="font-medium text-gray-700 hover:text-orange-600">{city}</span>
-          </div>
-
           {/* Desktop Auth Section */}
           <div className="hidden md:flex items-center space-x-4">
+            <div className="hidden md:flex items-center space-x-2 cursor-pointer" onClick={() => setShowLocationPopup(true)}>
+              <MapPin className="h-5 w-5 text-orange-600" />
+              <span className="font-medium text-gray-700 hover:text-orange-600">{city}</span>
+            </div>
             {isAuthenticated ? (
               <>
                 {/* Notifications */}
                 <div className="relative">
-                  <Button variant="ghost" size="sm" className="relative">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="relative"
+                    onClick={handleNotificationsClick}
+                  >
                     <Bell className="h-5 w-5" />
                     {unreadCount > 0 && (
                       <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs">
@@ -130,19 +142,17 @@ export default function Header() {
                         </p>
                       </div>
                     </div>
-                    <DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => navigate("/profile")}>
                       <User className="mr-2 h-4 w-4" />
                       <span>Profile</span>
                     </DropdownMenuItem>
-                    <DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => navigate("/settings")}>
                       <Settings className="mr-2 h-4 w-4" />
                       <span>Settings</span>
                     </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <a onClick={handleLogout} className="w-full">
-                        <LogOut className="mr-2 h-4 w-4" />
-                        <span>Log out</span>
-                      </a>
+                    <DropdownMenuItem onClick={handleLogout}>
+                      <LogOut className="mr-2 h-4 w-4" />
+                      <span>Log out</span>
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
@@ -152,7 +162,6 @@ export default function Header() {
                 <Button variant="ghost" onClick={() => setShowLogin(true)}>
                   Login
                 </Button>
-
                 <Select onValueChange={(value) => setSelectedRole(value)}>
                   <SelectTrigger className="w-[120px] focus:ring-0 focus:ring-gray-300">
                     <SelectValue placeholder="Sign Up As" />
@@ -163,7 +172,6 @@ export default function Header() {
                     <SelectItem value="ServiceCenter">Service Center</SelectItem>
                   </SelectContent>
                 </Select>
-
                 <Button
                   disabled={!selectedRole}
                   onClick={() => setShowSignUp(true)}
@@ -173,12 +181,10 @@ export default function Header() {
                 </Button>
               </div>
             )}
-
-            {/* Login Modal */}
             <LoginModal isOpen={showLogin} onClose={() => setShowLogin(false)} />
-
-            {/* Sign Up Modal */}
             <SignUpModal isOpen={showSignUp} onClose={() => setShowSignUp(false)} role={selectedRole} />
+              <NotifyPop isOpen={showNotificationModal} onClose={() => setShowNotificationModal(false)} />
+
           </div>
 
           {/* Mobile menu button */}
@@ -205,16 +211,12 @@ export default function Header() {
                   {item.name}
                 </Link>
               ))}
-
-              {/* Mobile Location Button */}
               <Button variant="ghost" onClick={() => setShowLocationPopup(true)}>
                 <MapPin className="h-5 w-5 mr-2 text-orange-600" /> {city}
               </Button>
-
               {!isAuthenticated && (
                 <div className="flex flex-col space-y-2 pt-4 border-t border-gray-200">
                   <Button variant="ghost" onClick={() => setShowLogin(true)}>Login</Button>
-
                   <Select onValueChange={(value) => setSelectedRole(value)}>
                     <SelectTrigger className="w-full">
                       <SelectValue placeholder="Sign Up As" />
@@ -225,7 +227,6 @@ export default function Header() {
                       <SelectItem value="ServiceCenter">Service Center</SelectItem>
                     </SelectContent>
                   </Select>
-
                   <Button
                     disabled={!selectedRole}
                     onClick={() => {
@@ -242,7 +243,7 @@ export default function Header() {
           </div>
         )}
       </div>
-
+      
       {/* Location Popup */}
       <LocationPopup
         show={showLocationPopup}

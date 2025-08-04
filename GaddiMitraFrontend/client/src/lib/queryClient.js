@@ -35,17 +35,20 @@ const mockDB = {
 };
 
 // API utility function
-export async function apiRequestMultiple(urls, options = {}) {
+export async function apiRequestMultiple(urls) {
+ 
   try {
     const responses = await Promise.all(
       urls.map((url) =>
+        
+       
         fetch(url, {
-          method: options.method || "GET",
+          method: "GET",
           headers: {
-            "Content-Type": "application/json",
-            ...(options.headers || {}),
+            "Content-Type": "application/json"
+            // ...( {}),
           },
-          ...options,
+          // ...options,
         }).then(async (res) => {
           if (!res.ok) {
             const text = await res.text();
@@ -68,6 +71,7 @@ export const queryClient = new QueryClient({
     queries: {
       queryFn: async ({ queryKey }) => {
         const key = queryKey[0];
+        const id = queryKey[1];
 
         if (key === "/api/vehicles+users") {
           const [
@@ -79,6 +83,9 @@ export const queryClient = new QueryClient({
             notification,
           ] = await apiRequestMultiple([
             "http://localhost:8080/veichles/allVeichles",
+            `http://localhost:8080//requests/showallrequests/${id}`,
+
+            
            
           ]);
           return {

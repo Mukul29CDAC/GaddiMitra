@@ -33,10 +33,9 @@ export default function Footer() {
           <div>
             <h3 className="font-semibold text-lg mb-4">Services</h3>
             <ul className="space-y-2">
-              <li><span className="text-gray-400">Buy Cars</span></li>
+              <li><span className="text-gray-400"><Link to="/cars">Buy Cars</Link></span></li>
               <li><span className="text-gray-400">Sell Cars</span></li>
               <li><span className="text-gray-400">Car Service</span></li>
-              <li><span className="text-gray-400">Insurance</span></li>
             </ul>
           </div>
 
@@ -63,7 +62,7 @@ export default function Footer() {
         {/* Bottom Bar */}
         <div className="border-t border-gray-800 mt-8 pt-8 text-center">
           <p className="text-gray-400">
-            © 2024 Gaaddi Mitra. All rights reserved. | Privacy Policy | Terms of Service
+            © 2025 Gaaddi Mitra. All rights reserved. | Privacy Policy | Terms of Service
           </p>
         </div>
       </div>
