@@ -19,14 +19,28 @@ import ServiceVehicleForm from "./pages/ServiceVehicleForm.jsx";
 import LoginModal from "./pages/LoginModal.jsx";
 import AboutUs from './pages/AboutUs.jsx'
 import LocationPopup from "./components/ui/LocationPopup.jsx";
+import VechileDetails from "./pages/VechicleDetails.jsx";
+import VehicleDetails from "./pages/VechicleDetails.jsx";
+import { useAuth } from "./context/AuthContext.jsx";
+import Notification from "./pages/Notification.jsx";
+import Notify from "./pages/Notification.jsx";
+import NotifyPop from "./pages/Notification.jsx";
 
 function Router() {
-  // const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading } = useAuth();
 
   return (
    
         <BrowserRouter>
           <Routes>
+            {!isAuthenticated ? 
+            (<>
+              <Route path="/" element={<Landing />} />
+            <Route path="/cars" element={<Cars />} />
+             <Route path="*" element={<NotFound />} />
+            
+            </>):
+            (<>
             <Route path="/" element={<Landing />} />
             <Route path="/cars" element={<Cars />} />
             <Route path="/home" element={<Home />} />
@@ -40,8 +54,12 @@ function Router() {
             <Route path="/dashboard/request/service" element={<ServiceVehicleForm />} />
           
             <Route path="/about" element={<AboutUs />} />
+            <Route path="/cars/details" element={<VehicleDetails />} />
             {/* Add other routes as needed */}
             <Route path="*" element={<NotFound />} />
+             <Route path="/notify" element={<NotifyPop />} />
+            </>)}
+            
           </Routes>
         </BrowserRouter>
      

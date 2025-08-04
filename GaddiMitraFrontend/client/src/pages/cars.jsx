@@ -14,10 +14,12 @@ import { Badge } from "../components/ui/badge.jsx";
 import { Search, Filter } from "lucide-react";
 import Header from "../components/layout/header.jsx";
 import Footer from "../components/layout/footer.jsx";
+import { navigate } from "wouter/use-browser-location";
+import { useNavigate } from "react-router-dom";
 
 export default function Cars() {
   const [searchTerm, setSearchTerm] = useState("");
-  
+
   const [filters, setFilters] = useState({
     priceRange: "",
     fueltype: "",
@@ -54,6 +56,13 @@ export default function Cars() {
 
     return matchesSearch && matchesPrice && matchesFilters;
   });
+
+  const navigate = useNavigate();
+  const handleVehicleClick = (vehicle) => {
+    navigate("/cars/details", {
+      state: { vehicle },
+    });
+  }
 
   if (isLoading) {
     return (
@@ -233,7 +242,12 @@ export default function Cars() {
                         <span className="text-2xl font-bold text-orange-600">
                           ₹{(parseFloat(vehicle.price) / 100000).toFixed(1)}L
                         </span>
-                        <Button size="sm">View Details</Button>
+                        <Button
+                          size="sm"
+                          onClick={()=>handleVehicleClick(vehicle)}
+                        >
+                          View Details
+                        </Button>
                       </div>
                     </CardContent>
                   </Card>

@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 export default function AboutUs() {
   return (
     <div className="bg-white min-h-screen py-12">
@@ -35,12 +37,12 @@ export default function AboutUs() {
         {/* Call to Action */}
         <section className="text-center mt-12">
           <h3 className="text-xl font-semibold mb-4">Ready to experience hassle-free vehicle management?</h3>
-          <a 
-            href="/cars" 
+          <Link
+            to="/cars" 
             className="bg-orange-600 hover:bg-orange-700 text-white px-6 py-3 rounded-lg shadow-lg transition-all"
           >
             Browse Cars →
-          </a>
+          </Link>
         </section>
       </div>
     </div>

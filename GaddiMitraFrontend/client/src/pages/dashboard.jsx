@@ -18,16 +18,21 @@ import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.jsx";
+import { useEffect } from "react";
 
 export default function Dashboard() {
   const navigate = useNavigate();
   const { user } = useAuth();
 
   const { data: stats } = useQuery({ queryKey: ["/api/dashboard/stats"] });
-  const { data: info } = useQuery({ queryKey: ["/api/vehicles+users"] });
+   const { data: info } = useQuery({
+    queryKey: ["/api/vehicles+users", user?.userid], // Pass userid here for the API call
+    enabled: !!user?.userid // Only enable if user.userid is available
+  });
 
   const vehicles = info?.vehicles || [];
   const requests = info?.request || [];
+  console.log(info?.request);
 
   const roleColors = {
     customer: "bg-blue-100 text-blue-800",
@@ -53,6 +58,10 @@ export default function Dashboard() {
       alert("Failed to delete vehicle.");
     }
   };
+
+  
+
+
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -160,7 +169,7 @@ export default function Dashboard() {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    {requests.slice(0, 3).map((request) => (
+                    {requests.slice(0,3).map((request) => (
                       <div
                         key={request.id}
                         className="flex items-center space-x-3 p-3 rounded-lg bg-gray-50"
@@ -350,7 +359,7 @@ export default function Dashboard() {
                           {request.veichletype} Wheeler
                         </h4>
                         <Badge variant="secondary">
-                          {request.notificationid}
+                          {request.requestid}
                         </Badge>
                       </div>
                       <p className="text-gray-600 mb-2">{request.model}</p>

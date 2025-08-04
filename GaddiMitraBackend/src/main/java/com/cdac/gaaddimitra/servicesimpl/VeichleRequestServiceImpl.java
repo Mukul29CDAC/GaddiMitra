@@ -47,25 +47,27 @@ public class VeichleRequestServiceImpl{
 	}
 
 
-	public List<VeichleRequestDto> allRequests() {
-		List<VeichleRequestDto> proxylist = new ArrayList<>();
-		Iterator<VeichleRequest> itr = repoRequest.findAll().iterator();
-		
-		while(itr.hasNext()) {
-			VeichleRequest request = itr.next();
-			VeichleRequestDto dto =  new VeichleRequestDto();
-			BeanUtils.copyProperties(itr.next(), dto);	
-			
-			  if (request.getImagedata() != null) {
-				  dto.setImagedata(Base64.getEncoder().encodeToString(request.getImagedata()));
-		        }
-			
-			proxylist.add(dto);
-		}
 
-		return proxylist;
-	}
+    public List<VeichleRequestDto> allRequests(int id) {
+        System.out.println("Service: allRequests() called for customer ID: " + id);
 
+        List<VeichleRequest> requests = repoRequest.findByCustomerId(id);
+
+        List<VeichleRequestDto> proxylist = new ArrayList<>();
+        for (VeichleRequest request : requests) { // Iterate directly over the List
+            VeichleRequestDto dto = new VeichleRequestDto();
+
+            BeanUtils.copyProperties(request, dto);
+
+            if (request.getImagedata() != null) {
+                dto.setImagedata(Base64.getEncoder().encodeToString(request.getImagedata()));
+            }
+            proxylist.add(dto);
+        }
+
+        System.out.println("Service: Found " + proxylist.size() + " requests for customer ID: " + id);
+        return proxylist;
+    }
 
 	public long totalRequests() {
 		// TODO Auto-generated method stub

@@ -41,10 +41,6 @@ public class VeichleRequestDto {
 	private Customer customer;
 
 
-	public Customer getCustomer() {
-		return customer;
-	}
-
 	public void setCustomer(Customer customer) {
 		this.customer = customer;
 	}
@@ -57,7 +53,7 @@ public class VeichleRequestDto {
 
 
 	public VeichleRequestDto(int requestid, int customerid, String requesttype, String veichletype, String brand,
-			String model, String description, String status, String imageurl, String imagedata, Customer customer) {
+			String model, String description, String status, String imageurl, String imagedata) {
 		super();
 		this.requestid = requestid;
 		this.customerid = customerid;
@@ -69,7 +65,7 @@ public class VeichleRequestDto {
 		this.status = status;
 		this.imageurl = imageurl;
 		this.imagedata = imagedata;
-		this.customer = customer;
+	
 	}
 
 	public int getRequestid() {
