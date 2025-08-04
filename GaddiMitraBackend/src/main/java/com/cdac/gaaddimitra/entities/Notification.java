@@ -2,8 +2,11 @@ package com.cdac.gaaddimitra.entities;
 
 import java.time.LocalDateTime;
 
+import com.cdac.gaaddimitra.utility.NotificationStatus;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -23,6 +26,9 @@ public class Notification {
 	@Column(name="requestid")
 	private int requestid;
 	
+	@Column(name="customerid")
+	private int customerid;
+	
 	@Column(name="recievertype")
 	private String recievertype;
 	
@@ -41,6 +47,9 @@ public class Notification {
 	@Column(name="datetime")
 	private LocalDateTime datetime;
 	
+	@Enumerated(value = jakarta.persistence.EnumType.STRING)
+	private NotificationStatus status;
+	
 	@ManyToOne
 	@JoinColumn(name = "requestid",insertable=false, updatable=false) // Foreign key in notification table
 	private VeichleRequest request;
@@ -49,20 +58,54 @@ public class Notification {
 		super();
 	}
 
-	public Notification(int notificationid, int requestid, String recievertype, String veichletype, String brand,
-			String model, String message, LocalDateTime datetime) {
+
+
+	public Notification(int notificationid, int requestid, int customerid, String recievertype, String veichletype,
+			String brand, String model, String message, LocalDateTime datetime, NotificationStatus status,
+			VeichleRequest request) {
 		super();
 		this.notificationid = notificationid;
 		this.requestid = requestid;
+		this.customerid = customerid;
 		this.recievertype = recievertype;
 		this.veichletype = veichletype;
 		this.brand = brand;
 		this.model = model;
 		this.message = message;
 		this.datetime = datetime;
+		this.status = status;
+		this.request = request;
 	}
 
-	
+
+
+	public int getCustomerid() {
+		return customerid;
+	}
+
+
+	public void setCustomerid(int customerid) {
+		this.customerid = customerid;
+	}
+
+
+
+
+
+
+
+
+
+	public NotificationStatus getStatus() {
+		return status;
+	}
+
+
+	public void setStatus(NotificationStatus status) {
+		this.status = status;
+	}
+
+
 	public String getModel() {
 		return model;
 	}
@@ -135,12 +178,17 @@ public class Notification {
 		this.datetime = datetime;
 	}
 
+
+
 	@Override
 	public String toString() {
-		return "Notification [notificationid=" + notificationid + ", requestid=" + requestid + ", recievertype="
-				+ recievertype + ", veichletype=" + veichletype + ", brand=" + brand + ", model=" + model + ", message="
-				+ message + ", datetime=" + datetime + "]";
+		return "Notification [notificationid=" + notificationid + ", requestid=" + requestid + ", customerid="
+				+ customerid + ", recievertype=" + recievertype + ", veichletype=" + veichletype + ", brand=" + brand
+				+ ", model=" + model + ", message=" + message + ", datetime=" + datetime + ", status=" + status
+				+ ", request=" + request + "]";
 	}
+
+
 
 	
 

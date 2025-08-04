@@ -25,11 +25,14 @@ export default function Dashboard() {
   const { user } = useAuth();
 
   const { data: stats } = useQuery({ queryKey: ["/api/dashboard/stats"] });
-  const { data: info } = useQuery({ queryKey: ["/api/vehicles+users",user.userid] });
+   const { data: info } = useQuery({
+    queryKey: ["/api/vehicles+users", user?.userid], // Pass userid here for the API call
+    enabled: !!user?.userid // Only enable if user.userid is available
+  });
 
   const vehicles = info?.vehicles || [];
   const requests = info?.request || [];
-  console.log(requests);
+  console.log(info?.request);
 
   const roleColors = {
     customer: "bg-blue-100 text-blue-800",
@@ -166,7 +169,7 @@ export default function Dashboard() {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    {requests.slice(0, 3).map((request) => (
+                    {requests.slice(0,3).map((request) => (
                       <div
                         key={request.id}
                         className="flex items-center space-x-3 p-3 rounded-lg bg-gray-50"

@@ -1,67 +1,114 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import { useAuth } from '../context/AuthContext';
 
 export default function NotifyPop({ isOpen, onClose }) {
-  // Mock notification data. In a real app, this would come from an API.
-  const [notifications, setNotifications] = useState([
-    { id: 1, message: 'Your car is ready for pickup!', type: 'service-center', isRead: false },
-    { id: 2, message: 'New special offer from your dealer!', type: 'dealer', isRead: false },
-    { id: 3, message: 'Test drive scheduled for 2 PM.', type: 'customer', isRead: true },
-    { id: 4, message: 'Reminder: Service is due next week.', type: 'service-center', isRead: false },
-  ]);
+  const { user } = useAuth();
+  const [notifications, setNotifications] = useState([]);
+  const [error, setError] = useState(null);
+
+  const API_BASE_URL = "http://localhost:8080"
+
+  useEffect(() => {
+    if (isOpen && user?.userid) {
+      const fetchData = async () => {
+        try {
+          const response = await axios.get(`${API_BASE_URL}/getNotification/${user?.userid}`);
+          console.log(`${API_BASE_URL}/getNotification/${user?.userid}`);
+
+          setNotifications(response.data);
+          console.log("Fetched Notifications:", response);
+          setError(null);
+        } catch (err) {
+          console.error("Error fetching notifications:", err);
+          setError(err);
+          setNotifications([]);
+        }
+      };
+      fetchData();
+    }
+  }, [isOpen, user?.userid]);
+
 
   if (!isOpen) return null;
 
-  const markAsRead = (id) => {
-    setNotifications(prevNotifications =>
-      prevNotifications.map(notification =>
-        notification.id === id ? { ...notification, isRead: true } : notification
-      )
-    );
+  const markAsRead = async (id) => {
+    try {
+      setNotifications(prevNotifications =>
+        prevNotifications.map(notification =>
+          notification.notificationid === id ? { ...notification, isRead: true } : notification
+        )
+      );
+    } catch (err) {
+      console.error("Error marking notification as read:", err);
+    }
   };
 
-  const deleteNotification = (id) => {
-    setNotifications(prevNotifications =>
-      prevNotifications.filter(notification => notification.id !== id)
-    );
+  const deleteNotification = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this notification?")) return;
+    try {
+      setNotifications(prevNotifications =>
+        prevNotifications.filter(notification => notification.notificationid !== id)
+      );
+    } catch (err) {
+      console.error("Error deleting notification:", err);
+    }
   };
 
   const NotificationItem = ({ notification }) => {
-    let borderColor = '';
-    switch (notification.type) {
-      case 'dealer':
-        borderColor = 'border-l-blue-500';
-        break;
-      case 'service-center':
-        borderColor = 'border-l-green-500';
-        break;
-      case 'customer':
-        borderColor = 'border-l-yellow-500';
-        break;
-      default:
-        borderColor = 'border-l-gray-400';
+    let borderColor = 'border-l-gray-300';
+    let bgColor = 'bg-white hover:bg-gray-50';
+    let textColor = 'text-gray-800';
+
+    borderColor = 'border-l-emerald-400';
+
+
+    if (notification.isRead) {
+      bgColor = 'bg-gray-50';
+      textColor = 'text-gray-500';
+    } else {
+      bgColor = 'bg-white shadow-sm';
+      textColor = 'text-gray-900';
     }
+
+    const notificationDate = notification.datetime ? new Date(notification.datetime) : null;
+
 
     return (
       <li
-        className={`flex items-center justify-between p-3 rounded-md transition-colors duration-200 border-l-4 ${borderColor} ${
-          notification.isRead ? 'bg-gray-50 text-gray-400' : 'bg-white hover:bg-gray-100 text-gray-800'
-        }`}
+        className={`flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 rounded-lg transition-colors duration-200 border-l-4 ${borderColor} ${bgColor} ${textColor}`}
       >
-        <span className="flex-1">
-          {notification.message}
-        </span>
-        <div className="flex space-x-2 ml-4">
+        <div className="flex-1 mb-1 sm:mb-0">
+
+          <div className="flex flex-wrap items-center text-xs text-gray-400 mt-0 space-x-2">
+          
+            {notification.status && <span className="px-2 py-1 bg-gray-100 rounded-full">Status: {notification.status}</span>}
+          
+            {notification.recievertype && <span className="px-2 py-1 bg-gray-100 rounded-full capitalize">To: {notification.recievertype}</span>}
+
+          </div>
+          
+          <h3 className="font-semibold text-base mb-1">
+
+            <span className="capitalize">{notification.message} </span>
+
+          </h3>
+
+
+        </div>
+
+        <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 mt-3 sm:mt-0">
           {!notification.isRead && (
             <button
-              onClick={() => markAsRead(notification.id)}
-              className="text-sm text-green-500 hover:text-green-700"
+              onClick={() => markAsRead(notification.notificationid)}
+              className="px-3 py-1 text-sm bg-green-100 text-green-700 rounded-full hover:bg-green-200 transition-colors"
             >
               Mark Read
             </button>
           )}
           <button
-            onClick={() => deleteNotification(notification.id)}
-            className="text-sm text-red-500 hover:text-red-700"
+            onClick={() => deleteNotification(notification.notificationid)}
+            className="px-3 py-1 text-sm bg-red-100 text-red-700 rounded-full hover:bg-red-200 transition-colors"
           >
             Delete
           </button>
@@ -71,19 +118,32 @@ export default function NotifyPop({ isOpen, onClose }) {
   };
 
   return (
-    <div className="fixed inset-0 bg-opacity-0 z-50 flex items-center justify-center">
-      <div className="bg-white rounded-lg shadow-lg max-w-lg w-full mx-4 p-6 relative">
-        <button className="absolute top-3 right-4 text-gray-500 hover:text-black text-2xl" onClick={onClose}>
-          ×
+    <div className="fixed inset-0 bg-black bg-opacity-40 z-50 flex items-center justify-center p-4">
+      <div className="bg-white rounded-xl shadow-2xl max-w-lg w-full mx-auto p-6 relative animate-fade-in-up">
+        <button
+          className="absolute top-4 right-4 text-gray-500 hover:text-black text-3xl font-light leading-none"
+          onClick={onClose}
+        >
+          &times;
         </button>
-        <h2 className="text-xl font-semibold mb-4">Notifications</h2>
-        <ul className="space-y-4 max-h-80 overflow-y-auto pr-2">
+
+        <h2 className="text-2xl font-bold text-gray-900 mb-6 border-b pb-3">Your Notifications</h2>
+
+        {error && (
+          <div className="text-red-600 bg-red-50 p-3 rounded-md mb-4 text-sm">
+            Error loading notifications: {error.message || "Please check your network or try again later."}
+          </div>
+        )}
+
+        <ul className="space-y-4 max-h-80 overflow-y-auto pr-2 custom-scrollbar">
           {notifications.length > 0 ? (
             notifications.map((notification) => (
-              <NotificationItem key={notification.id} notification={notification} />
+              <NotificationItem key={notification.notificationid} notification={notification} />
             ))
           ) : (
-            <li className="text-center text-gray-500 py-4">No new notifications.</li>
+            <li className="text-center text-gray-500 py-6 text-lg">
+              No new notifications. You're all caught up! 🎉
+            </li>
           )}
         </ul>
       </div>

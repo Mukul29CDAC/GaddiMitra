@@ -30,8 +30,9 @@ public class VeichleRequestPublisher {
 	        if(vec.getRequesttype().equalsIgnoreCase("Service")) {
 	        	
 	        	List<Users> users = repoUser.findByRole("servicecenter");
-	        	System.out.println(users);
+	        	
 		        for (Users center : users) {
+		        	System.out.println(center);
 		        	Notification notification = notifyController.createNotification(vec,"servicecenter");
 		        	notifyController.sendNotification(notification);
  

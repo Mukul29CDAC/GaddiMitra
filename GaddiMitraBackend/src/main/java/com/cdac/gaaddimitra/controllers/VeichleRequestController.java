@@ -4,6 +4,7 @@ import java.util.List;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,13 +26,17 @@ public class VeichleRequestController {
 	@Autowired
 	VeichleRequestServiceImpl service;
 	
-	
-	@GetMapping("/requests/showallrequests/{id}")
-	public List<VeichleRequestDto> allRequest(@PathVariable int id){
-		System.out.println("hello"+service.allRequests(id));
-		return service.allRequests(id);
-	}
-	
+    @GetMapping("/requests/showallrequests/{id}")
+    public ResponseEntity<List<VeichleRequestDto>> allRequest(@PathVariable int id) {
+        System.out.println("Controller: Fetching all requests for customer ID: " + id);
+        List<VeichleRequestDto> requests = service.allRequests(id);
+        if (requests.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(requests); 
+    }
+    
+    
 	@PostMapping("requests/addRequest")
 	public String addRequest(@RequestPart("obj") VeichleRequestDto vec,
 			@RequestPart("image") MultipartFile image) {
