@@ -8,7 +8,9 @@ import java.util.List;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.cdac.gaaddimitra.entities.VeichleRequest;
@@ -48,6 +50,7 @@ public class VeichleRequestServiceImpl{
 
 
 
+
     public List<VeichleRequestDto> allRequests(int id) {
         System.out.println("Service: allRequests() called for customer ID: " + id);
 
@@ -65,9 +68,21 @@ public class VeichleRequestServiceImpl{
             proxylist.add(dto);
         }
 
+
         System.out.println("Service: Found " + proxylist.size() + " requests for customer ID: " + id);
         return proxylist;
     }
+
+	public List<VeichleRequestDto> getAllServiceRequest() {
+		List<VeichleRequestDto> veichleRequests = repoRequest.findByRequestType("service");
+		if (veichleRequests.isEmpty()) {
+			throw new RuntimeException("No service requests found");
+		}
+		else {
+			return veichleRequests;
+		}
+	}
+
 
 	public long totalRequests() {
 		// TODO Auto-generated method stub

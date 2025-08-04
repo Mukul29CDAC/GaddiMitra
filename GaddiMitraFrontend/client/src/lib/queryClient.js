@@ -37,16 +37,20 @@ const mockDB = {
 // API utility function
 export async function apiRequestMultiple(urls) {
 
+
   try {
     const responses = await Promise.all(
       urls.map((url) =>
+
 
 
         fetch(url, {
           method: "GET",
           headers: {
             "Content-Type": "application/json"
+
           },
+
         }).then(async (res) => {
           if (!res.ok) {
             const text = await res.text();
@@ -83,7 +87,9 @@ export const queryClient = new QueryClient({
         
           ] = await apiRequestMultiple([
             "http://localhost:8080/veichles/allVeichles",
+
             `http://localhost:8080/requests/showallrequests/${id}`,
+
           ]);
           return {
             vehicles,

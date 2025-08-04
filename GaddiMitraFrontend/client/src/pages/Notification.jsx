@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
@@ -102,13 +103,16 @@ export default function NotifyPop({ isOpen, onClose }) {
             <button
               onClick={() => markAsRead(notification.notificationid)}
               className="px-3 py-1 text-sm bg-green-100 text-green-700 rounded-full hover:bg-green-200 transition-colors"
+
             >
               Mark Read
             </button>
           )}
           <button
+
             onClick={() => deleteNotification(notification.notificationid)}
             className="px-3 py-1 text-sm bg-red-100 text-red-700 rounded-full hover:bg-red-200 transition-colors"
+
           >
             Delete
           </button>
@@ -118,6 +122,7 @@ export default function NotifyPop({ isOpen, onClose }) {
   };
 
   return (
+
     <div className="fixed inset-0 bg-black bg-opacity-40 z-50 flex items-center justify-center p-4">
       <div className="bg-white rounded-xl shadow-2xl max-w-lg w-full mx-auto p-6 relative animate-fade-in-up">
         <button
@@ -144,6 +149,7 @@ export default function NotifyPop({ isOpen, onClose }) {
             <li className="text-center text-gray-500 py-6 text-lg">
               No new notifications. You're all caught up! 🎉
             </li>
+
           )}
         </ul>
       </div>

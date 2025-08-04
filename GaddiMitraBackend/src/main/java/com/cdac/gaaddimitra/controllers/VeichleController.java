@@ -55,11 +55,4 @@ public class VeichleController {
 		
 	}
 	
-	@GetMapping("/veichles/veichleDetails/{id}")
-	public ResponseEntity<VeichleDto> getVechicleDetails(@PathVariable int id) {
-		VeichleDto vehicleDto = serviceVeichle.getVeichleDetails(id);
-		if(vehicleDto == null)
-			return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
-	    return new ResponseEntity<>(vehicleDto, HttpStatus.OK);
-	}
 }
