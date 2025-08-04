@@ -1,4 +1,4 @@
-import { useState  } from "react";
+import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "../ui/button.jsx";
 import { Badge } from "../ui/badge.jsx";
@@ -10,7 +10,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu.jsx";
-import { Bell, User, LogOut, Settings, Menu, X } from "lucide-react";
+import { Bell, User, LogOut, Settings, Menu, X, MapPin } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import {
   Select,
@@ -21,18 +21,22 @@ import {
 } from "../ui/select.jsx";
 import LoginModal from "../../pages/LoginModal.jsx";
 import { useAuth } from "../../context/AuthContext.jsx";
+import LocationPopup from "../ui/LocationPopup.jsx";
+
+// You'll need to import your new NotifyPop component here
+import NotifyPop from '../../pages/Notification.jsx';
 
 export default function Header() {
-  const { user, isAuthenticated,logout } = useAuth();
-
+  const { user, isAuthenticated, logout } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
+
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showSignUp, setShowSignUp] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
   const [selectedRole, setSelectedRole] = useState("");
-
-  const navigate = useNavigate();
-  
+  const [showLocationPopup, setShowLocationPopup] = useState(false);
+  const [city, setCity] = useState(localStorage.getItem("city") || "Select City");
 
   const { data: notifications } = useQuery({
     queryKey: ["/api/notifications"],
@@ -55,10 +59,18 @@ export default function Header() {
   const handleLogout = () => {
     navigate("/");
     logout();
-    
-    // setMobileMenuOpen(false);
-    // alert("Logged out successfully.");
   };
+
+  const handleCitySelect = (selectedCity) => {
+    setCity(selectedCity);
+    localStorage.setItem("city", selectedCity);
+  };
+
+ const [showNotificationModal, setShowNotificationModal] = useState(false);
+
+const handleNotificationsClick = () => {
+  setShowNotificationModal(true);
+};
 
 
   return (
@@ -88,11 +100,20 @@ export default function Header() {
 
           {/* Desktop Auth Section */}
           <div className="hidden md:flex items-center space-x-4">
+            <div className="hidden md:flex items-center space-x-2 cursor-pointer" onClick={() => setShowLocationPopup(true)}>
+              <MapPin className="h-5 w-5 text-orange-600" />
+              <span className="font-medium text-gray-700 hover:text-orange-600">{city}</span>
+            </div>
             {isAuthenticated ? (
               <>
                 {/* Notifications */}
                 <div className="relative">
-                  <Button variant="ghost" size="sm" className="relative">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="relative"
+                    onClick={handleNotificationsClick}
+                  >
                     <Bell className="h-5 w-5" />
                     {unreadCount > 0 && (
                       <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs">
@@ -121,19 +142,17 @@ export default function Header() {
                         </p>
                       </div>
                     </div>
-                    <DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => navigate("/profile")}>
                       <User className="mr-2 h-4 w-4" />
                       <span>Profile</span>
                     </DropdownMenuItem>
-                    <DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => navigate("/settings")}>
                       <Settings className="mr-2 h-4 w-4" />
                       <span>Settings</span>
                     </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <a onClick={() => handleLogout()}className="w-full">
-                        <LogOut className="mr-2 h-4 w-4" />
-                        <span>Log out</span>
-                      </a>
+                    <DropdownMenuItem onClick={handleLogout}>
+                      <LogOut className="mr-2 h-4 w-4" />
+                      <span>Log out</span>
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
@@ -143,7 +162,6 @@ export default function Header() {
                 <Button variant="ghost" onClick={() => setShowLogin(true)}>
                   Login
                 </Button>
-
                 <Select onValueChange={(value) => setSelectedRole(value)}>
                   <SelectTrigger className="w-[120px] focus:ring-0 focus:ring-gray-300">
                     <SelectValue placeholder="Sign Up As" />
@@ -154,7 +172,6 @@ export default function Header() {
                     <SelectItem value="ServiceCenter">Service Center</SelectItem>
                   </SelectContent>
                 </Select>
-
                 <Button
                   disabled={!selectedRole}
                   onClick={() => setShowSignUp(true)}
@@ -164,25 +181,15 @@ export default function Header() {
                 </Button>
               </div>
             )}
-
-            {/* Login Modal */}
             <LoginModal isOpen={showLogin} onClose={() => setShowLogin(false)} />
+            <SignUpModal isOpen={showSignUp} onClose={() => setShowSignUp(false)} role={selectedRole} />
+              <NotifyPop isOpen={showNotificationModal} onClose={() => setShowNotificationModal(false)} />
 
-            {/* Sign Up Modal */}
-            <SignUpModal
-              isOpen={showSignUp}
-              onClose={() => setShowSignUp(false)}
-              role={selectedRole}
-            />
           </div>
 
           {/* Mobile menu button */}
           <div className="md:hidden">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            >
+            <Button variant="ghost" size="sm" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
               {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </Button>
           </div>
@@ -204,13 +211,12 @@ export default function Header() {
                   {item.name}
                 </Link>
               ))}
-
+              <Button variant="ghost" onClick={() => setShowLocationPopup(true)}>
+                <MapPin className="h-5 w-5 mr-2 text-orange-600" /> {city}
+              </Button>
               {!isAuthenticated && (
                 <div className="flex flex-col space-y-2 pt-4 border-t border-gray-200">
-                  <Button variant="ghost" onClick={() => setShowLogin(true)}>
-                    Login
-                  </Button>
-
+                  <Button variant="ghost" onClick={() => setShowLogin(true)}>Login</Button>
                   <Select onValueChange={(value) => setSelectedRole(value)}>
                     <SelectTrigger className="w-full">
                       <SelectValue placeholder="Sign Up As" />
@@ -221,7 +227,6 @@ export default function Header() {
                       <SelectItem value="ServiceCenter">Service Center</SelectItem>
                     </SelectContent>
                   </Select>
-
                   <Button
                     disabled={!selectedRole}
                     onClick={() => {
@@ -238,6 +243,13 @@ export default function Header() {
           </div>
         )}
       </div>
+      
+      {/* Location Popup */}
+      <LocationPopup
+        show={showLocationPopup}
+        onClose={() => setShowLocationPopup(false)}
+        onSelect={handleCitySelect}
+      />
     </header>
   );
 }

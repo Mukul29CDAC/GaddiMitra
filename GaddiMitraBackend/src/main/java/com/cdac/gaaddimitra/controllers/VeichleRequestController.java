@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -25,23 +26,21 @@ public class VeichleRequestController {
 	VeichleRequestServiceImpl service;
 	
 	
-	@GetMapping("/requests/showallrequests")
-	public List<VeichleRequestDto> allRequest(){
-		
-		return service.allRequests();
+	@GetMapping("/requests/showallrequests/{id}")
+	public List<VeichleRequestDto> allRequest(@PathVariable int id){
+		System.out.println("hello"+service.allRequests(id));
+		return service.allRequests(id);
 	}
 	
 	@PostMapping("requests/addRequest")
 	public String addRequest(@RequestPart("obj") VeichleRequestDto vec,
 			@RequestPart("image") MultipartFile image) {
-//		System.out.println(vec);
 		service.addRequest(vec,image);	
 		return "Request Added";
 	}
 	
 	@GetMapping("/veichleRequest/total")
 	public long totalRequest() {
-//		System.out.println();
 		return service.totalRequests();
 	}
 }

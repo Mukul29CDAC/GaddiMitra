@@ -47,9 +47,9 @@ public class VeichleRequestServiceImpl{
 	}
 
 
-	public List<VeichleRequestDto> allRequests() {
+	public List<VeichleRequestDto> allRequests(int id) {
 		List<VeichleRequestDto> proxylist = new ArrayList<>();
-		Iterator<VeichleRequest> itr = repoRequest.findAll().iterator();
+		Iterator<VeichleRequest> itr = repoRequest.findByCustomerId(id).iterator();
 		
 		while(itr.hasNext()) {
 			VeichleRequest request = itr.next();

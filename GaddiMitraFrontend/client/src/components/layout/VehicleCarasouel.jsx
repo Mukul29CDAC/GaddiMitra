@@ -43,7 +43,11 @@ const vehicles = info?.vehicles || [];
               <Card key={vehicle.id} className="card-hover cursor-pointer">
                 <div className="relative">
                   <img
-                    src={vehicle.imageurl}
+                    src={ vehicle.imageurl
+                            ? vehicle.imageurl
+                            : vehicle.imagedata
+                            ? `data:${vehicle.imagetype};base64,${vehicle.imagedata}`
+                            : "https://via.placeholder.com/400x300?text=Vehicle+Image"}
                     alt={`${vehicle.brand} ${vehicle.model}`}
                     className="w-full h-22 object-cover rounded-t-lg"
                   />
