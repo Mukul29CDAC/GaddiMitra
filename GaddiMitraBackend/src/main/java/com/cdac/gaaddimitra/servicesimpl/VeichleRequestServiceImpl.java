@@ -49,21 +49,6 @@ public class VeichleRequestServiceImpl{
 	}
 
 
-	public List<VeichleRequestDto> allRequests(int id) {
-		List<VeichleRequestDto> proxylist = new ArrayList<>();
-		Iterator<VeichleRequest> itr = repoRequest.findByCustomerId(id).iterator();
-		
-		while(itr.hasNext()) {
-			VeichleRequest request = itr.next();
-			VeichleRequestDto dto =  new VeichleRequestDto();
-			BeanUtils.copyProperties(itr.next(), dto);	
-			
-			  if (request.getImagedata() != null) {
-				  dto.setImagedata(Base64.getEncoder().encodeToString(request.getImagedata()));
-		        }
-			
-			proxylist.add(dto);
-		}
 
 
     public List<VeichleRequestDto> allRequests(int id) {

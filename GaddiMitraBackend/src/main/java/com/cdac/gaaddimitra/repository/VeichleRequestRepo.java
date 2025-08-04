@@ -15,16 +15,15 @@ import com.cdac.gaaddimitra.entitiesDTO.VeichleRequestDto;
 public interface VeichleRequestRepo extends JpaRepository<VeichleRequest, Integer>{
 
 
-	@Query(value = "Select * FROM veichlerequest where customerid:customerid", nativeQuery=true)
+	@Query(value = "Select * FROM veichlerequest where customerid=:customerid", nativeQuery=true)
 	public List<VeichleRequest> findByCustomerId(@Param("customerid") int id);
 
 	
-	@Query(value = "Select * FROM veichlerequest where requesttype:requesttype", nativeQuery=true)
+	@Query(value = "Select * FROM veichlerequest where requesttype=:requesttype", nativeQuery=true)
 	public List<VeichleRequestDto> findByRequestType(@Param("requesttype") String requesttype);
-}
 
 
-    @Query(value = "SELECT * FROM veichlerequest where customerid=:customerid", nativeQuery=true)
-    List<VeichleRequest> findByCustomerId(@Param("customerid") int customerid); // Parameter name matches @Param
+
+   
 
 }
