@@ -4,6 +4,7 @@ import java.util.List;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.cdac.gaaddimitra.entitiesDTO.VeichleDto;
 //import com.cdac.gaaddimitra.entities.VeichleRequest;
 import com.cdac.gaaddimitra.entitiesDTO.VeichleRequestDto;
 //import com.cdac.gaaddimitra.observer.VeichleRequestPublisher;
@@ -25,7 +27,7 @@ public class VeichleRequestController {
 	@Autowired
 	VeichleRequestServiceImpl service;
 	
-	
+	// requests for a customer
 	@GetMapping("/requests/showallrequests/{id}")
 	public List<VeichleRequestDto> allRequest(@PathVariable int id){
 		System.out.println("hello"+service.allRequests(id));
@@ -42,5 +44,15 @@ public class VeichleRequestController {
 	@GetMapping("/veichleRequest/total")
 	public long totalRequest() {
 		return service.totalRequests();
+	}
+	
+	// requests for a service center
+	@GetMapping("/requests/getAllServiceRequests")
+	public ResponseEntity<List<VeichleRequestDto>> getServiceRequests() {
+		List<VeichleRequestDto> veichleRequests = service.getAllServiceRequest();
+		if (veichleRequests.isEmpty()) {
+			return ResponseEntity.noContent().build();
+		}
+		return ResponseEntity.ok(veichleRequests);
 	}
 }
