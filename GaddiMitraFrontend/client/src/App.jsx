@@ -19,15 +19,12 @@ import ServiceVehicleForm from "./pages/ServiceVehicleForm.jsx";
 import LoginModal from "./pages/LoginModal.jsx";
 import AboutUs from './pages/AboutUs.jsx'
 import LocationPopup from "./components/ui/LocationPopup.jsx";
-<<<<<<< HEAD
 import VechileDetails from "./pages/VechicleDetails.jsx";
 import VehicleDetails from "./pages/VechicleDetails.jsx";
 import { useAuth } from "./context/AuthContext.jsx";
 import Notification from "./pages/Notification.jsx";
 import Notify from "./pages/Notification.jsx";
 import NotifyPop from "./pages/Notification.jsx";
-=======
->>>>>>> main
 
 function Router() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -57,10 +54,7 @@ function Router() {
             <Route path="/dashboard/request/service" element={<ServiceVehicleForm />} />
           
             <Route path="/about" element={<AboutUs />} />
-<<<<<<< HEAD
             <Route path="/cars/details" element={<VehicleDetails />} />
-=======
->>>>>>> main
             {/* Add other routes as needed */}
             <Route path="*" element={<NotFound />} />
              <Route path="/notify" element={<NotifyPop />} />

@@ -22,12 +22,9 @@ import {
 import LoginModal from "../../pages/LoginModal.jsx";
 import { useAuth } from "../../context/AuthContext.jsx";
 import LocationPopup from "../ui/LocationPopup.jsx";
-<<<<<<< HEAD
 
 // You'll need to import your new NotifyPop component here
 import NotifyPop from '../../pages/Notification.jsx';
-=======
->>>>>>> main
 
 export default function Header() {
   const { user, isAuthenticated, logout } = useAuth();
@@ -68,7 +65,6 @@ export default function Header() {
     setCity(selectedCity);
     localStorage.setItem("city", selectedCity);
   };
-<<<<<<< HEAD
 
  const [showNotificationModal, setShowNotificationModal] = useState(false);
 
@@ -76,14 +72,11 @@ const handleNotificationsClick = () => {
   setShowNotificationModal(true);
 };
 
-=======
->>>>>>> main
 
   return (
     <header className="bg-white shadow-sm sticky top-0 z-50">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
-
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2">
             <div className="bg-orange-600 text-white px-3 py-1 rounded-lg font-bold">GAADDI</div>
@@ -104,12 +97,6 @@ const handleNotificationsClick = () => {
               </Link>
             ))}
           </nav>
-
-          {/* Location Selector Button */}
-          <div className="hidden md:flex items-center space-x-2 cursor-pointer" onClick={() => setShowLocationPopup(true)}>
-            <MapPin className="h-5 w-5 text-orange-600" />
-            <span className="font-medium text-gray-700 hover:text-orange-600">{city}</span>
-          </div>
 
           {/* Desktop Auth Section */}
           <div className="hidden md:flex items-center space-x-4">
@@ -163,17 +150,9 @@ const handleNotificationsClick = () => {
                       <Settings className="mr-2 h-4 w-4" />
                       <span>Settings</span>
                     </DropdownMenuItem>
-<<<<<<< HEAD
                     <DropdownMenuItem onClick={handleLogout}>
                       <LogOut className="mr-2 h-4 w-4" />
                       <span>Log out</span>
-=======
-                    <DropdownMenuItem asChild>
-                      <a onClick={handleLogout} className="w-full">
-                        <LogOut className="mr-2 h-4 w-4" />
-                        <span>Log out</span>
-                      </a>
->>>>>>> main
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
@@ -206,11 +185,6 @@ const handleNotificationsClick = () => {
             <SignUpModal isOpen={showSignUp} onClose={() => setShowSignUp(false)} role={selectedRole} />
               <NotifyPop isOpen={showNotificationModal} onClose={() => setShowNotificationModal(false)} />
 
-<<<<<<< HEAD
-=======
-            {/* Sign Up Modal */}
-            <SignUpModal isOpen={showSignUp} onClose={() => setShowSignUp(false)} role={selectedRole} />
->>>>>>> main
           </div>
 
           {/* Mobile menu button */}
@@ -237,25 +211,12 @@ const handleNotificationsClick = () => {
                   {item.name}
                 </Link>
               ))}
-<<<<<<< HEAD
               <Button variant="ghost" onClick={() => setShowLocationPopup(true)}>
                 <MapPin className="h-5 w-5 mr-2 text-orange-600" /> {city}
               </Button>
               {!isAuthenticated && (
                 <div className="flex flex-col space-y-2 pt-4 border-t border-gray-200">
                   <Button variant="ghost" onClick={() => setShowLogin(true)}>Login</Button>
-=======
-
-              {/* Mobile Location Button */}
-              <Button variant="ghost" onClick={() => setShowLocationPopup(true)}>
-                <MapPin className="h-5 w-5 mr-2 text-orange-600" /> {city}
-              </Button>
-
-              {!isAuthenticated && (
-                <div className="flex flex-col space-y-2 pt-4 border-t border-gray-200">
-                  <Button variant="ghost" onClick={() => setShowLogin(true)}>Login</Button>
-
->>>>>>> main
                   <Select onValueChange={(value) => setSelectedRole(value)}>
                     <SelectTrigger className="w-full">
                       <SelectValue placeholder="Sign Up As" />
@@ -282,11 +243,7 @@ const handleNotificationsClick = () => {
           </div>
         )}
       </div>
-<<<<<<< HEAD
       
-=======
-
->>>>>>> main
       {/* Location Popup */}
       <LocationPopup
         show={showLocationPopup}
