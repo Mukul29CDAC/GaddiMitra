@@ -6,12 +6,13 @@ import { Car, Settings, Users, TrendingUp } from "lucide-react";
 import Header from "../components/layout/header.jsx";
 import Footer from "../components/layout/footer.jsx";
 import { useAuth } from "../context/AuthContext.jsx";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 // import { useAuth } from "../hooks/useAuth.js";
 
 export default function Home() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   
   const { data: stats } = useQuery({
     queryKey: ["/api/dashboard/stats"],
@@ -149,7 +150,7 @@ export default function Home() {
                 Update your profile, preferences, and account settings
               </p>
               <Button variant="outline" className="w-full" asChild>
-                <Link to="/dashboard">Go to Dashboard</Link>
+                <Link to="/profile">Go to Profile</Link>
               </Button>
             </CardContent>
           </Card>
@@ -165,7 +166,7 @@ export default function Home() {
               <p className="text-gray-600 mb-4">
                 Contact our support team for assistance with your needs
               </p>
-              <Button variant="outline" className="w-full">
+              <Button variant="outline" className="w-full" onClick={()=>navigate("/contact")}>
                 Contact Support
               </Button>
             </CardContent>

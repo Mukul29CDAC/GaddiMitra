@@ -26,11 +26,12 @@ public class VeichleServiceImpl {
 	
 
 	
-	public void addVeichle(VeichleDto obj,MultipartFile image) {
+	public void addVeichle(VeichleDto obj,MultipartFile image,int id) {
 		Veichles vec = new Veichles();
 	
 		            vec.setImagename(image.getOriginalFilename());
 		            vec.setImagetype(image.getContentType());
+		            vec.setUserid(id);
 		            try {
 						vec.setImagedata(image.getBytes());
 					} catch (IOException e) {
@@ -63,6 +64,23 @@ public class VeichleServiceImpl {
 	    return list;
 	}
 
+	public List<VeichleDto> getDealerVeichle(int dealerid) {
+	    List<VeichleDto> list = new ArrayList<>();
+	    Iterator<Veichles> itr = repoVeichle.findByDealerId(dealerid).iterator();
+	    while (itr.hasNext()) {
+	        Veichles veichle = itr.next(); // Store the current entity
+	        VeichleDto vech = new VeichleDto();
+	        BeanUtils.copyProperties(veichle, vech);
+
+	        if (veichle.getImagedata() != null) {
+	            vech.setImagedata(Base64.getEncoder().encodeToString(veichle.getImagedata()));
+	        }
+
+	        list.add(vech);
+	    }
+
+	    return list;
+	}
 
 
 

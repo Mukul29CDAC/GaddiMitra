@@ -17,7 +17,7 @@ import ServiceCenters from "./pages/ServiceCenters.jsx";
 import BuyVehicleForm from "./pages/ServiceVehicleForm.jsx";
 import ServiceVehicleForm from "./pages/ServiceVehicleForm.jsx";
 import LoginModal from "./pages/LoginModal.jsx";
-import AboutUs from './pages/AboutUs.jsx'
+import AboutUs from "./pages/AboutUs.jsx";
 import LocationPopup from "./components/ui/LocationPopup.jsx";
 import VechileDetails from "./pages/VechicleDetails.jsx";
 import VehicleDetails from "./pages/VechicleDetails.jsx";
@@ -25,47 +25,66 @@ import { useAuth } from "./context/AuthContext.jsx";
 import Notification from "./pages/Notification.jsx";
 import Notify from "./pages/Notification.jsx";
 import NotifyPop from "./pages/Notification.jsx";
+import TransactionHistory from "./pages/TransactionHistory.jsx";
+import ContactSupport from "./pages/ContactSupport.jsx";
+import Profile from "./pages/Profile.jsx";
 
 function Router() {
   const { isAuthenticated, isLoading } = useAuth();
 
   return (
-   
-        <BrowserRouter>
-          <Routes>
-            {!isAuthenticated ? 
-            (<>
-              <Route path="/" element={<Landing />} />
+    <BrowserRouter>
+      <Routes>
+        {!isAuthenticated ? (
+          <>
+            <Route path="/" element={<Landing />} />
             <Route path="/cars" element={<Cars />} />
-             <Route path="*" element={<NotFound />} />
-            
-            </>):
-            (<>
+            <Route path="*" element={<NotFound />} />
+            {/* <Route path="/home" element={<Home />} /> */}
+            {/* <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/dashboard/transactions" element={<TransactionHistory />} /> */}
+            <Route path="/contact" element={<ContactSupport />} />
+            {/* <Route path="/profile" element={<Profile />} /> */}
+          </>
+        ) : (
+          <>
             <Route path="/" element={<Landing />} />
             <Route path="/cars" element={<Cars />} />
             <Route path="/home" element={<Home />} />
             {/* <Route path="/login" element={<LoginModal />}/> */}
-            <Route path="/servicecenters" element={<ServiceCenters/>} />
+            <Route path="/servicecenters" element={<ServiceCenters />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/dashboard/vehicles/add" element={<AddVehicle />} />
             <Route path="/dashboard/vehicles/edit" element={<EditVehicle />} />
-            <Route path="/dashboard/request/details" element={<RequestDetails />} />
-            <Route path="/dashboard/send-quotation" element={<SendQuotationForm />} />
-            <Route path="/dashboard/request/service" element={<ServiceVehicleForm />} />
-          
+            <Route
+              path="/dashboard/request/details"
+              element={<RequestDetails />}
+            />
+            <Route
+              path="/dashboard/send-quotation"
+              element={<SendQuotationForm />}
+            />
+            <Route
+              path="/dashboard/request/service"
+              element={<ServiceVehicleForm />}
+            />
+
             <Route path="/about" element={<AboutUs />} />
             <Route path="/cars/details" element={<VehicleDetails />} />
-            {/* Add other routes as needed */}
+            <Route path="/profile" element={<Profile />} />
+            <Route
+              path="/dashboard/transactions"
+              element={<TransactionHistory />}
+            />
+            <Route path="/contact" element={<ContactSupport />} />
             <Route path="*" element={<NotFound />} />
-             <Route path="/notify" element={<NotifyPop />} />
-            </>)}
-            
-          </Routes>
-        </BrowserRouter>
-     
+            <Route path="/notify" element={<NotifyPop />} />
+          </>
+        )}
+      </Routes>
+    </BrowserRouter>
   );
 }
-
 
 function App() {
   return (
@@ -73,7 +92,7 @@ function App() {
       <TooltipProvider>
         <Toaster />
         <Router />
-         <LocationPopup /> 
+        <LocationPopup />
       </TooltipProvider>
     </QueryClientProvider>
   );

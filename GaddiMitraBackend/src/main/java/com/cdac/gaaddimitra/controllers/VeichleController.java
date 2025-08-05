@@ -26,40 +26,39 @@ public class VeichleController {
 
 	@Autowired
 	VeichleServiceImpl serviceVeichle;
-	
-	
+
+
 	@GetMapping("/veichles/allVeichles")
 	public List<VeichleDto> allVeichles() {
 		return  serviceVeichle.getAllVeichle();
 	}
 	
-	@PostMapping("/veichles/addVeichle")
-	public void addVeichle(@RequestPart("obj") VeichleDto obj,
-	                                         @RequestPart("image") MultipartFile image) {
-	         serviceVeichle.addVeichle(obj,image);
-	    
+	@GetMapping("/veichles/allVeichles/{dealerid}")
+	public List<VeichleDto> allVeichles(@PathVariable int dealerid) {
+		return  serviceVeichle.getDealerVeichle(dealerid);
 	}
 
-	
+	@PostMapping("/veichles/addVeichle/{id}")
+	public void addVeichle(@RequestPart("obj") VeichleDto obj,
+			@RequestPart("image") MultipartFile image,
+			@PathVariable int id){
+		serviceVeichle.addVeichle(obj,image,id);
+
+	}
+
+
 	@GetMapping("/veichles/totalVeichle")
 	public int gettotal() {
 		return serviceVeichle.totalVeichle();
 	}
-	
+
 	@DeleteMapping("/veichles/removeVeichle/{id}")
 	public String deleteVeichle(@PathVariable int id) {
 		System.out.println(id);
 		serviceVeichle.deleteVeichle(id);
-		
+
 		return "deleted";
-		
+
 	}
-	
-	@GetMapping("/veichles/veichleDetails/{id}")
-	public ResponseEntity<VeichleDto> getVechicleDetails(@PathVariable int id) {
-		VeichleDto vehicleDto = serviceVeichle.getVeichleDetails(id);
-		if(vehicleDto == null)
-			return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
-	    return new ResponseEntity<>(vehicleDto, HttpStatus.OK);
-	}
+
 }

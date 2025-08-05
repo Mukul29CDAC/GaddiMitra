@@ -62,7 +62,7 @@ export default function Cars() {
     navigate("/cars/details", {
       state: { vehicle },
     });
-  }
+  };
 
   if (isLoading) {
     return (
@@ -244,7 +244,7 @@ export default function Cars() {
                         </span>
                         <Button
                           size="sm"
-                          onClick={()=>handleVehicleClick(vehicle)}
+                          onClick={() => handleVehicleClick(vehicle)}
                         >
                           View Details
                         </Button>

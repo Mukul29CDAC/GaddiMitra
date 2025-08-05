@@ -2,11 +2,14 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import axios from "axios";
 import Header from "../components/layout/header";
+import { useAuth } from "../context/AuthContext";
 
 export default function RequestDetails() {
   const location = useLocation();
   const navigate = useNavigate();
   const request = location.state;
+
+  const { user } = useAuth();
 
   useEffect(() => {
     if (!request) navigate("/dashboard");
@@ -14,21 +17,21 @@ export default function RequestDetails() {
 
   if (!request) return null;
 
-
   const handleDeclineRequest = async () => {
     try {
-      const response = await axios.post("http://localhost:8080/request/decline", {
-        requestId: request.request?.requestid,
-        customerId: request.request?.customerid,
-        // notificationId: request.notificationid,
-        reason: "Request declined by service center.",
-      });
+      const response = await axios.post(
+        "http://localhost:8080/request/decline",
+        {
+          requestId: request.request?.requestid,
+          customerId: request.request?.customerid,
+          // notificationId: request.notificationid,
+          reason: "Request declined by service center.",
+        }
+      );
 
       alert("Request declined.");
-      // console.log("Decline Response:", response.data);
       navigate("/dashboard");
     } catch (error) {
-      console.error("Error declining request:", error);
       alert("Failed to decline request.");
     }
   };
@@ -37,7 +40,6 @@ export default function RequestDetails() {
     <div className="min-h-screen bg-gray-50">
       <Header />
       <div className="max-w-4xl mx-auto p-6 bg-white shadow-md rounded mt-6">
-
         {/* Back to Dashboard */}
         <button
           onClick={() => navigate("/dashboard")}
@@ -56,7 +58,7 @@ export default function RequestDetails() {
             // { label: "Notification ID:", value: request.notificationid },
             { label: "Request ID:", value: request?.requestid },
             { label: "Customer ID:", value: request?.customerid },
-            
+
             {
               label: "Vehicle Type:",
               value: `${request.veichletype?.toUpperCase()} Wheeler`,
@@ -84,35 +86,51 @@ export default function RequestDetails() {
 
         {/* Action Buttons */}
         <div className="flex flex-wrap gap-4 justify-between mt-8">
-          <button
-            className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
-             onClick={() => navigate("/dashboard/send-quotation", { state: request })}
-          >
-            Send Quotation
-          </button>
-
-          <button
-            className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
-            onClick={handleDeclineRequest}
-          >
-            Decline Request
-          </button>
-
-          <button
-            disabled={!request.customerContact}
-            onClick={() => {
-              if (request.customerContact) {
-                window.location.href = `tel:${request.customerContact}`;
+          {user.role !== "customer" && (
+            <button
+              className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+              onClick={() =>
+                navigate("/dashboard/send-quotation", { state: request })
               }
-            }}
-            className={`px-4 py-2 rounded text-white ${
-              request.customerContact
-                ? "bg-blue-600 hover:bg-blue-700"
-                : "bg-gray-400 cursor-not-allowed"
-            }`}
-          >
-            Call Customer
-          </button>
+            >
+              Send Quotation
+            </button>
+          )}
+
+          {user.role === "customer" ? (
+            <button className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">
+              Delete Request
+            </button>
+          ) : (
+            <button
+              className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
+              onClick={handleDeclineRequest}
+            >
+              Decline Request
+            </button>
+          )}
+
+          {user.role !== "customer" ? (
+            <button
+              disabled={!request.customerContact}
+              onClick={() => {
+                if (request.customerContact) {
+                  window.location.href = `tel:${request.customerContact}`;
+                }
+              }}
+              className={`px-4 py-2 rounded text-white ${
+                request.customerContact
+                  ? "bg-blue-600 hover:bg-blue-700"
+                  : "bg-gray-400 cursor-not-allowed"
+              }`}
+            >
+              Call Customer
+            </button>
+          ) : (
+            <button className="bg-indigo-500 text-white px-4 py-2 rounded hover:bg-red-700">
+              Edit Request
+            </button>
+          )}
         </div>
       </div>
     </div>

@@ -1,4 +1,3 @@
-// import { useAuth } from "../hooks/useAuth.js";
 import {
   Card,
   CardContent,
@@ -18,21 +17,62 @@ import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.jsx";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import ProgressBar from "./ProgressBar.jsx";
+import { Button } from "react-day-picker";
 
 export default function Dashboard() {
   const navigate = useNavigate();
   const { user } = useAuth();
 
   const { data: stats } = useQuery({ queryKey: ["/api/dashboard/stats"] });
-   const { data: info } = useQuery({
-    queryKey: ["/api/vehicles+users", user?.userid], // Pass userid here for the API call
-    enabled: !!user?.userid // Only enable if user.userid is available
+
+  const { data: info } = useQuery({
+    queryKey: ["/api/vehicles+users", user?.userid],
+    enabled: !!user?.userid,
   });
 
-  const vehicles = info?.vehicles || [];
-  const requests = info?.request || [];
-  console.log(info?.request);
+  const [vehicles, setVehicles] = useState([]);
+  const [requests, setRequests] = useState([]);
+
+  const profileCompletion = user
+    ? (Object.values(user).filter((value) => value !== null && value !== "")
+        .length /
+        Object.keys(user).length) *
+      100
+    : 0;
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        if (user?.role === "customer") {
+          const customerRequest = await axios.get(
+            `http://localhost:8080/requests/showallrequests/${user?.userid}`
+          );
+          setRequests(customerRequest.data);
+        } else {
+          const response = await axios.get(
+            `http://localhost:8080/requests/getAllServiceRequests/${user?.role}`
+          );
+
+          const vehiclesRes = await axios.get(
+            `http://localhost:8080/veichles/allVeichles/${user.userid}`
+          );
+
+          setRequests(response.data);
+          setVehicles(vehiclesRes.data);
+        }
+      } catch (err) {
+        console.error("Failed to fetch data:", err);
+        setRequests([]);
+        setVehicles([]);
+      }
+    };
+
+    if (user?.userid && user?.role) {
+      fetchData();
+    }
+  }, [user?.userid, user?.role]);
 
   const roleColors = {
     customer: "bg-blue-100 text-blue-800",
@@ -53,22 +93,20 @@ export default function Dashboard() {
         `http://localhost:8080/veichles/removeVeichle/${vehicleId}`
       );
       alert("Vehicle deleted successfully!");
+      setVehicles((prev) => prev.filter((v) => v.id !== vehicleId));
     } catch (error) {
-      // console.error("Error deleting vehicle:", error);
       alert("Failed to delete vehicle.");
     }
   };
 
-  
-
-
-
+  const handletransaction = () => {
+    navigate("/dashboard/transactions");
+  };
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
 
       <div className="container mx-auto px-4 py-8">
-        {/* Dashboard Header */}
         <div className="mb-8">
           <div className="flex items-center justify-between">
             <div>
@@ -87,10 +125,20 @@ export default function Dashboard() {
                       user?.role?.slice(1) || "Customer"}
               </Badge>
             </div>
+            <div className="w-1/4">
+              <p className="text-sm font-medium text-gray-600 mb-1">
+                Profile Completion
+              </p>
+
+              <ProgressBar value={profileCompletion} variant="success" />
+
+              <p className="text-xs text-right text-gray-500 mt-1">
+                {Math.round(profileCompletion)}%
+              </p>
+            </div>
           </div>
         </div>
 
-        {/* Stats Overview */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <Card>
             <CardHeader className="flex justify-between items-center pb-2">
@@ -149,7 +197,6 @@ export default function Dashboard() {
           </Card>
         </div>
 
-        {/* Tabs */}
         <Tabs defaultValue="overview" className="space-y-6">
           <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="overview">Overview</TabsTrigger>
@@ -160,7 +207,6 @@ export default function Dashboard() {
             <TabsTrigger value="transactions">Transactions</TabsTrigger>
           </TabsList>
 
-          {/* Overview Tab */}
           <TabsContent value="overview">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <Card>
@@ -203,70 +249,14 @@ export default function Dashboard() {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-3">
-                    {user?.role === "customer" && (
-                      <>
-                        <button
-                          className="w-full p-3 text-left rounded-lg hover:bg-gray-50 border"
-                          onClick={() => navigate("/dashboard/request/service")}
-                        >
-                          <h4 className="font-medium">Request Service</h4>
-                          <p className="text-sm text-gray-600">
-                            Get your vehicle serviced
-                          </p>
-                        </button>
-                        <button
-                          className="w-full p-3 text-left rounded-lg hover:bg-gray-50 border"
-                          onClick={() => navigate("/cars")}
-                        >
-                          <h4 className="font-medium">Buy Vehicle</h4>
-                          <p className="text-sm text-gray-600">
-                            Find your perfect car
-                          </p>
-                        </button>
-                      </>
-                    )}
-                    {user?.role === "dealer" && (
-                      <>
-                        <button
-                          onClick={() => navigate("/dashboard/vehicles/add")}
-                          className="w-full p-3 text-left rounded-lg hover:bg-gray-50 border"
-                        >
-                          <h4 className="font-medium">Add Vehicle</h4>
-                          <p className="text-sm text-gray-600">
-                            List a new vehicle
-                          </p>
-                        </button>
-                        <button className="w-full p-3 text-left rounded-lg hover:bg-gray-50 border">
-                          <h4 className="font-medium">Manage Inventory</h4>
-                          <p className="text-sm text-gray-600">
-                            Update vehicle details
-                          </p>
-                        </button>
-                      </>
-                    )}
-                    {user?.role === "service_center" && (
-                      <>
-                        <button className="w-full p-3 text-left rounded-lg hover:bg-gray-50 border">
-                          <h4 className="font-medium">Service Requests</h4>
-                          <p className="text-sm text-gray-600">
-                            View pending requests
-                          </p>
-                        </button>
-                        <button className="w-full p-3 text-left rounded-lg hover:bg-gray-50 border">
-                          <h4 className="font-medium">Create Quotation</h4>
-                          <p className="text-sm text-gray-600">
-                            Provide service quotes
-                          </p>
-                        </button>
-                      </>
-                    )}
+                    {/* Quick action buttons based on role */}
+                    {/* ... */}
                   </div>
                 </CardContent>
               </Card>
             </div>
           </TabsContent>
 
-          {/* Vehicles Tab */}
           {user?.role === "dealer" && (
             <TabsContent value="vehicles">
               <Card>
@@ -280,18 +270,17 @@ export default function Dashboard() {
                         key={vehicle.id}
                         className="flex items-center space-x-4 p-4 border rounded-lg"
                       >
-                       <img
-  src={
-    vehicle.imageurl
-      ? vehicle.imageurl
-      : vehicle.imagedata
-      ? `data:${vehicle.imagetype};base64,${vehicle.imagedata}`
-      : "https://via.placeholder.com/80x60?text=Car"
-  }
-  alt={`${vehicle.brand} ${vehicle.model}`}
-  className="w-20 h-15 object-cover rounded"
-/>
-
+                        <img
+                          src={
+                            vehicle.imageurl
+                              ? vehicle.imageurl
+                              : vehicle.imagedata
+                              ? `data:${vehicle.imagetype};base64,${vehicle.imagedata}`
+                              : "https://via.placeholder.com/80x60?text=Car"
+                          }
+                          alt={`${vehicle.brand} ${vehicle.model}`}
+                          className="w-20 h-15 object-cover rounded"
+                        />
                         <div className="flex-1">
                           <h4 className="font-medium">
                             {vehicle.brand} {vehicle.model}
@@ -307,7 +296,7 @@ export default function Dashboard() {
                         <Badge
                           variant={vehicle.isActive ? "default" : "secondary"}
                         >
-                          {vehicle.isActive ? "Inactive" : "Active"}
+                          {vehicle.isActive ? "Active" : "Inactive"}
                         </Badge>
                         <div className="space-x-2">
                           <button
@@ -336,7 +325,6 @@ export default function Dashboard() {
             </TabsContent>
           )}
 
-          {/* Requests Tab */}
           <TabsContent value="requests">
             <Card>
               <CardHeader>
@@ -358,9 +346,7 @@ export default function Dashboard() {
                         <h4 className="font-medium capitalize">
                           {request.veichletype} Wheeler
                         </h4>
-                        <Badge variant="secondary">
-                          {request.requestid}
-                        </Badge>
+                        <Badge variant="secondary">{request.requestid}</Badge>
                       </div>
                       <p className="text-gray-600 mb-2">{request.model}</p>
                       <div className="flex justify-between items-center text-sm text-gray-500">
@@ -381,15 +367,24 @@ export default function Dashboard() {
             </Card>
           </TabsContent>
 
-          {/* Transactions Tab */}
           <TabsContent value="transactions">
             <Card>
               <CardHeader>
                 <CardTitle>Transaction History</CardTitle>
               </CardHeader>
+
               <CardContent>
                 <div className="text-gray-500 text-center py-8">
                   No transactions available
+                  <CardTitle>
+                    {" "}
+                    <button
+                      onClick={() => handletransaction()}
+                      className="px-3 py-2 my-3 text-sm bg-orange-600 text-white rounded hover:bg-orange-800"
+                    >
+                      View All
+                    </button>
+                  </CardTitle>
                 </div>
               </CardContent>
             </Card>

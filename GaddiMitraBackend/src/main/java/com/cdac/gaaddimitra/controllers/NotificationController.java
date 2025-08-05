@@ -63,7 +63,7 @@ public class NotificationController {
 	
 	@GetMapping("/getNotification")
 	public ResponseEntity<List<NotificationDTO>>  show(){
-		System.out.println("NotificationController.show() called");
+	
 		List<Notification> notify = repoNotify.findAll();
 		List<NotificationDTO> notifyDTO = notify.stream().map(n -> {
 			NotificationDTO dto = new NotificationDTO();
@@ -75,8 +75,19 @@ public class NotificationController {
 	
 	@GetMapping("/getNotification/{id}")
 	public ResponseEntity<List<NotificationDTO>> customerNotification(@PathVariable int id){
-		System.out.println("NotificationController.get() called");
+	
 		List<Notification> notify = repoNotify.findByCustomerId(id);
+		List<NotificationDTO> notifyDTO = notify.stream().map(n -> {
+			NotificationDTO dto = new NotificationDTO();
+			BeanUtils.copyProperties(n, dto);
+			return dto;
+		}).toList();
+		return ResponseEntity.ok(notifyDTO); 
+	}
+	
+	@GetMapping("/allNotification/{recievertype}")
+	public ResponseEntity<List<NotificationDTO>> allNotification(@PathVariable String recievertype){
+		List<Notification> notify = repoNotify.findByRecieverType(recievertype);
 		List<NotificationDTO> notifyDTO = notify.stream().map(n -> {
 			NotificationDTO dto = new NotificationDTO();
 			BeanUtils.copyProperties(n, dto);

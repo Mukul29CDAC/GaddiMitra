@@ -42,6 +42,7 @@ export default function Header() {
     queryKey: ["/api/notifications"],
     enabled: isAuthenticated,
   });
+  
 
   const unreadCount = notifications?.filter((n) => !n.isRead).length || 0;
 

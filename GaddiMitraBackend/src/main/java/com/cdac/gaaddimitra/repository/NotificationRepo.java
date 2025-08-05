@@ -12,4 +12,7 @@ public interface NotificationRepo extends JpaRepository<Notification, Integer> {
 
 	@Query("SELECT n FROM Notification n WHERE n.customerid = :customerId")
 	public List<Notification> findByCustomerId(@Param("customerId") int customerId);
+	
+	@Query("SELECT n FROM Notification n WHERE n.recievertype =:recievertype")
+	public List<Notification> findByRecieverType(@Param("recievertype") String recievertype);
 }

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Header from "../components/layout/header";
+import { useAuth } from "../context/AuthContext";
 
 export default function AddVehicle() {
   const [vehicle, setVehicle] = useState({
@@ -20,6 +21,8 @@ export default function AddVehicle() {
 
   const navigate = useNavigate();
 
+  const {user} = useAuth();
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setVehicle({ ...vehicle, [name]: value });
@@ -32,7 +35,7 @@ export default function AddVehicle() {
   payload.append("obj", new Blob([JSON.stringify(vehicle)], { type: "application/json" }));
   payload.append("image", vehicle.imageData);
     try {
-      await axios.post("http://localhost:8080/veichles/addVeichle", payload, {
+      await axios.post(`http://localhost:8080/veichles/addVeichle/${user.userid}`, payload, {
       headers: {
         "Content-Type": "multipart/form-data",
       },});
