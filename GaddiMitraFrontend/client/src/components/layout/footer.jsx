@@ -33,9 +33,9 @@ export default function Footer() {
           <div>
             <h3 className="font-semibold text-lg mb-4">Services</h3>
             <ul className="space-y-2">
-             <li><Link to="/cars" className="text-gray-400 hover:text-white">Buy Cars</Link></li>
+             <li><Link to="/cars" className="text-gray-400 hover:text-white">Buy Vehicle</Link></li>
 
-              <li><Link to="/dashboard/request/service" className="text-gray-400 hover:text-white">Car Service</Link></li>
+              <li><Link to="/dashboard/request/service" className="text-gray-400 hover:text-white">Vehicle Service</Link></li>
 
               <li><Link to="/servicecenters" className="text-gray-400 hover:text-white">Find Service Centers</Link></li>
             </ul>

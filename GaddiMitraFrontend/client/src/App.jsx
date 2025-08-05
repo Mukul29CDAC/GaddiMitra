@@ -45,6 +45,12 @@ function Router() {
             <Route path="/dashboard/transactions" element={<TransactionHistory />} /> */}
             <Route path="/contact" element={<ContactSupport />} />
             {/* <Route path="/profile" element={<Profile />} /> */}
+            <Route path="/servicecenters" element={<ServiceCenters />} />
+            
+                 <Route
+              path="/dashboard/request/service"
+              element={<ServiceVehicleForm />}
+            />
           </>
         ) : (
           <>

@@ -1,60 +1,184 @@
-import { useEffect, useState } from "react";
 import axios from "axios";
-import Header from "../components/layout/header";
+import { useState } from "react";
 
-export default function ServiceCenters() {
-  const [serviceCenters, setServiceCenters] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+export default function SignUpModal({ isOpen, onClose, role }) {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    password: "",
+    address: "",
+    type: "",
+  });
 
-  useEffect(() => {
-    fetchServiceCenters();
-  }, []);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  const fetchServiceCenters = async () => {
+  if (!isOpen) return null;
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setError(null);
+
+    const payload = {
+      ...formData,
+      role: role.toLowerCase(),
+    };
+
+    if (role !== "ServiceCenter") {
+      delete payload.type;
+    }
+
     try {
-      const response = await axios.get("http://localhost:8080/servicecenter/allcenters");
-      setServiceCenters(response.data);
-    } catch (err) {
-      setError("Failed to fetch service centers.");
-      console.error(err);
+      await axios.post(
+        `http://localhost:8080/user/register`,
+        payload
+      );
+      
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        password: "",
+        address: "",
+        type: "",
+      });
+      alert("Registration successful!");
+      onClose();
+
+    } catch (error) {
+      console.error("Signup Error:", error.response?.data || error.message);
+      setError("Registration failed. Please try again.");
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <Header />
-      <div className="max-w-5xl mx-auto px-4 py-10">
-        <h2 className="text-3xl font-bold text-center text-gray-800 mb-10">Registered Service Centers</h2>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+      <div className="bg-white p-8 rounded-md w-full max-w-sm shadow-lg relative">
+        <button
+          onClick={onClose}
+          className="absolute top-2 right-2 text-gray-500 hover:text-gray-800 text-2xl"
+        >
+          &times;
+        </button>
 
-        {loading && <p className="text-center text-gray-500">Loading service centers...</p>}
-        {error && <p className="text-center text-red-500">{error}</p>}
+        <h2 className="text-2xl font-bold mb-6 text-center text-orange-600">
+          Register as {role}
+        </h2>
 
-        {!loading && !error && (
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {serviceCenters.length === 0 ? (
-              <p className="text-center text-gray-500 col-span-full">No service centers registered yet.</p>
-            ) : (
-              serviceCenters.map((center) => (
-                <div
-                  key={center.id}
-                  className="bg-white p-6 rounded-xl shadow-md border border-gray-200 hover:shadow-lg transition-all duration-300"
-                >
-                  <h3 className="text-xl font-semibold text-blue-700 mb-2">{center.name}</h3>
-
-                  <div className="space-y-1 text-gray-700 text-sm">
-                    <p><span className="font-medium text-gray-600">📧 Email:</span> {center.email}</p>
-                    <p><span className="font-medium text-gray-600">📞 Phone:</span> {center.phone}</p>
-                    <p><span className="font-medium text-gray-600">📍 Location:</span> {center.address}</p>
-                    <p><span className="font-medium text-gray-600">Type:</span> {center.type}</p>
-                  </div>
-                </div>
-              ))
-            )}
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block mb-1 text-sm font-medium text-gray-700">
+              Full Name
+            </label>
+            <input
+              type="text"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              required
+              className="w-full border border-gray-300 p-2 rounded"
+            />
           </div>
-        )}
+
+          <div>
+            <label className="block mb-1 text-sm font-medium text-gray-700">
+              Email Address
+            </label>
+            <input
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              required
+              className="w-full border border-gray-300 p-2 rounded"
+            />
+          </div>
+
+          <div>
+            <label className="block mb-1 text-sm font-medium text-gray-700">
+              Phone Number
+            </label>
+            <input
+              type="tel"
+              name="phone"
+              value={formData.phone}
+              onChange={handleChange}
+              required
+              className="w-full border border-gray-300 p-2 rounded"
+            />
+          </div>
+
+          <div>
+            <label className="block mb-1 text-sm font-medium text-gray-700">
+              Password
+            </label>
+            <input
+              type="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              required
+              className="w-full border border-gray-300 p-2 rounded"
+            />
+          </div>
+
+          <div>
+            <label className="block mb-1 text-sm font-medium text-gray-700">
+              Address
+            </label>
+            <input
+              type="text"
+              name="address"
+              value={formData.address}
+              onChange={handleChange}
+              required
+              className="w-full border border-gray-300 p-2 rounded"
+            />
+          </div>
+          
+          {role === "ServiceCenter" && (
+            <div>
+              <label className="block mb-1 text-sm font-medium text-gray-700">
+                Service Center Type
+              </label>
+              <select
+                name="type"
+                value={formData.type}
+                onChange={handleChange}
+                required
+                className="w-full border border-gray-300 p-2 rounded"
+              >
+                <option value="">Select Type</option>
+                <option value="Local">Local</option>
+                <option value="Authorised">Authorised</option>
+              </select>
+            </div>
+          )}
+
+          {error && (
+            <div className="text-red-500 text-sm font-medium text-center">{error}</div>
+          )}
+
+          <button
+            type="submit"
+            className="w-full bg-orange-600 text-white py-2 rounded hover:bg-orange-400 font-medium disabled:bg-gray-400 disabled:cursor-not-allowed"
+            disabled={isLoading}
+          >
+            {isLoading ? "Signing up..." : "Sign Up"}
+          </button>
+        </form>
       </div>
     </div>
   );
