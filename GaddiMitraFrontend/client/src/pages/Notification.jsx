@@ -8,20 +8,19 @@ export default function NotifyPop({ isOpen, onClose }) {
   const [notifications, setNotifications] = useState([]);
   const [error, setError] = useState(null);
 
-  const API_BASE_URL = "http://localhost:8080"
-
   useEffect(() => {
     if (isOpen && user?.userid) {
       const fetchData = async () => {
         try {
-          const response = await axios.get(`${API_BASE_URL}/getNotification/${user?.userid}`);
-          console.log(`${API_BASE_URL}/getNotification/${user?.userid}`);
-
-          setNotifications(response.data);
-          console.log("Fetched Notifications:", response);
+          if(user.role === "customer"){
+            const response = await axios.get(`http://localhost:8080/getNotification/${user?.userid}`);
+            setNotifications(response.data);
+          }else{
+              const response = await axios.get(`http://localhost:8080/allNotification/${user?.role}`);
+              setNotifications(response.data);
+          }
           setError(null);
         } catch (err) {
-          console.error("Error fetching notifications:", err);
           setError(err);
           setNotifications([]);
         }
@@ -84,8 +83,8 @@ export default function NotifyPop({ isOpen, onClose }) {
           <div className="flex flex-wrap items-center text-xs text-gray-400 mt-0 space-x-2">
           
             {notification.status && <span className="px-2 py-1 bg-gray-100 rounded-full">Status: {notification.status}</span>}
-          
-            {notification.recievertype && <span className="px-2 py-1 bg-gray-100 rounded-full capitalize">To: {notification.recievertype}</span>}
+            
+            {(notification.recievertype && user.role === "customer") ? (<span className="px-2 py-2 my-2 bg-gray-600 text-white rounded-full capitalize">To: {notification.recievertype}</span>):(<span className="px-2 py-2 my-2 bg-gray-600 text-white rounded-full capitalize">Customer Id: {notification.customerid}</span>)}
 
           </div>
           

@@ -73,14 +73,26 @@ public class VeichleRequestServiceImpl{
         return proxylist;
     }
 
-	public List<VeichleRequestDto> getAllServiceRequest() {
-		List<VeichleRequestDto> veichleRequests = repoRequest.findByRequestType("service");
-		if (veichleRequests.isEmpty()) {
+	public List<VeichleRequestDto> getAllServiceRequest(String role) {
+		List<VeichleRequestDto> listDto = new ArrayList();
+		Iterator<VeichleRequest> veichleRequests = null;
+		if(role.equals("servicecenter")) {
+			veichleRequests = repoRequest.findByRequestType("service").iterator();
+		}else if(role.equals("dealer")) {
+			veichleRequests = repoRequest.findByRequestType("buy").iterator();
+		}
+		
+		if (!veichleRequests.hasNext()) {
 			throw new RuntimeException("No service requests found");
 		}
 		else {
-			return veichleRequests;
+			while(veichleRequests.hasNext()) {
+				VeichleRequestDto obj = new VeichleRequestDto();
+				BeanUtils.copyProperties(veichleRequests.next(), obj);
+				listDto.add(obj);
+			}
 		}
+		return listDto;
 	}
 
 

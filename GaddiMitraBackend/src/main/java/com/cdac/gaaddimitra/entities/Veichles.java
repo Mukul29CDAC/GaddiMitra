@@ -8,7 +8,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -24,6 +26,9 @@ public class Veichles {
 	
 	@Column
 	private String model;
+	
+	@Column
+	private int userid;
 	
 	@Column
 	private String variant;
@@ -55,12 +60,16 @@ public class Veichles {
 	
 	@Lob
 	private byte[] imagedata;
+	
+	@ManyToOne
+	@JoinColumn(name = "userid",insertable=false, updatable=false) // Foreign key in notification table
+	private Dealer dealer;
 
 	public Veichles() {
 		super();
 	}
 
-	public Veichles(int id, String brand, String model, String variant, int year, String fueltype, String transmission,
+	public Veichles(int id,int userid, String brand, String model, String variant, int year, String fueltype, String transmission,
 			String bodytype, String price, String imageurl, String description, String imagename, String imagetype,
 			byte[] imagedata) {
 		super();
@@ -78,6 +87,7 @@ public class Veichles {
 		this.imagename = imagename;
 		this.imagetype = imagetype;
 		this.imagedata = imagedata;
+		this.userid = userid;
 	}
 
 	public int getId() {
@@ -90,6 +100,14 @@ public class Veichles {
 
 	public String getBrand() {
 		return brand;
+	}
+
+	public int getUserid() {
+		return userid;
+	}
+
+	public void setUserid(int userid) {
+		this.userid = userid;
 	}
 
 	public void setBrand(String brand) {

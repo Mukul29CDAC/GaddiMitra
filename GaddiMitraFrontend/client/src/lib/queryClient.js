@@ -36,21 +36,14 @@ const mockDB = {
 
 // API utility function
 export async function apiRequestMultiple(urls) {
-
-
   try {
     const responses = await Promise.all(
       urls.map((url) =>
-
-
-
         fetch(url, {
           method: "GET",
           headers: {
-            "Content-Type": "application/json"
-
+            "Content-Type": "application/json",
           },
-
         }).then(async (res) => {
           if (!res.ok) {
             const text = await res.text();
@@ -75,32 +68,27 @@ export const queryClient = new QueryClient({
         const key = queryKey[0];
         const id = queryKey[1];
 
-        if (key === "/api/vehicles+users") { // Note: This key is different from "/api/vehicles+Requests"
-          const [
-            vehicles,
-            request, // This 'request' variable receives the second API response
-            notify,
-            totalVehicles,
-            totalRequest,
-            totalQuotation,
-             notification,
-        
-          ] = await apiRequestMultiple([
+        if (key === "/api/vehicles+users") {
+          // Note: This key is different from "/api/vehicles+Requests"
+          const [vehicles,customerrequest,totalVehicles,totalRequest,totalQuotation] = await apiRequestMultiple([
             "http://localhost:8080/veichles/allVeichles",
-
-            `http://localhost:8080/requests/showallrequests/${id}`,
-
+         
           ]);
           return {
             vehicles,
-            request, // This 'request' is an object containing the response from the second API call.
-            notify,
-            totalVehicles,
-            totalRequest,
-            totalQuotation,
-             notification,
-  
           };
+        }
+
+         if (key === "/api/transactions") {
+
+           // In a real scenario, you would fetch this from an API endpoint
+
+          //  const response = await axios.get(`http://localhost:8080/transactions/${id}`);
+
+          //  return response.data;
+
+           return []; // Returning empty array for now
+
         }
         // fallback to mock
         if (mockDB[key]) {

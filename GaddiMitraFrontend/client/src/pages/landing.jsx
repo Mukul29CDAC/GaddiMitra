@@ -30,7 +30,6 @@ export default function Landing() {
   });
 
   const mockVehicles = info?.vehicles || [];
-// console.log("Mock Vehicles:", mockVehicles);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [filters, setFilters] = useState({

@@ -53,9 +53,9 @@ public class VeichleRequestController {
 	}
 	
 	// requests for a service center
-	@GetMapping("/requests/getAllServiceRequests")
-	public ResponseEntity<List<VeichleRequestDto>> getServiceRequests() {
-		List<VeichleRequestDto> veichleRequests = service.getAllServiceRequest();
+	@GetMapping("/requests/getAllServiceRequests/{role}")
+	public ResponseEntity<List<VeichleRequestDto>> getServiceRequests(@PathVariable String role) {
+		List<VeichleRequestDto> veichleRequests = service.getAllServiceRequest(role);
 		if (veichleRequests.isEmpty()) {
 			return ResponseEntity.noContent().build();
 		}

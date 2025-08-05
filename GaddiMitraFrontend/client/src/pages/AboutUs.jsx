@@ -1,8 +1,11 @@
 import { Link } from "react-router-dom";
+import Header from "../components/layout/header";
+import Footer from "../components/layout/footer";
 
 export default function AboutUs() {
   return (
-    <div className="bg-white min-h-screen py-12">
+    <div className="bg-white min-h-screen">
+      <Header></Header>
       {/* Top Banner Section */}
       <div className="bg-orange-600 text-white py-16 px-6 text-center shadow-md">
         <h1 className="text-4xl font-bold mb-4">About <span className="text-yellow-300">Gaaddi Mitra</span></h1>
@@ -45,6 +48,7 @@ export default function AboutUs() {
           </Link>
         </section>
       </div>
+      <Footer></Footer>
     </div>
   );
 }

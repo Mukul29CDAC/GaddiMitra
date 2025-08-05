@@ -20,7 +20,7 @@ public interface VeichleRequestRepo extends JpaRepository<VeichleRequest, Intege
 
 	
 	@Query(value = "Select * FROM veichlerequest where requesttype=:requesttype", nativeQuery=true)
-	public List<VeichleRequestDto> findByRequestType(@Param("requesttype") String requesttype);
+	public List<VeichleRequest> findByRequestType(@Param("requesttype") String requesttype);
 
 
 
