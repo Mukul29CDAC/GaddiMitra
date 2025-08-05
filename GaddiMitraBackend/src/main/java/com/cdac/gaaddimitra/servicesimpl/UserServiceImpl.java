@@ -34,11 +34,10 @@ public class UserServiceImpl {
 	
 	@Autowired
 	DealerRepo repoDealer;
-	
+
 	
 
 	public UserDto login(UserDto obj) {
-		// TODO Auto-generated method stub
 		UserDto user = new UserDto();
 		Users usr = repoUser.findByEmail(obj.getEmail());
 			
@@ -68,14 +67,10 @@ public class UserServiceImpl {
 			BeanUtils.copyProperties(obj, dealer);
 			repoDealer.save(dealer);
 		}
-		
 		else {
 			BeanUtils.copyProperties(obj, user);
 			repoUser.save(user);
-		}
-		
-		
-		
+		}	
 	}
 
 }
