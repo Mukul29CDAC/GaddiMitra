@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Header from "../components/layout/header";
 import { useAuth } from "../context/AuthContext.jsx";
+import Footer from "../components/layout/footer.jsx";
 
 export default function ServiceVehicleForm() {
   const {user} = useAuth();
@@ -50,7 +51,7 @@ export default function ServiceVehicleForm() {
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
-      <div className="max-w-2xl mx-auto p-6 mt-6 bg-white rounded shadow-md">
+      <div className="max-w-2xl mx-auto p-6 mt-12 mb-12 bg-white rounded shadow-md">
         <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">
           Vehicle Service Request
         </h2>
@@ -149,6 +150,7 @@ export default function ServiceVehicleForm() {
           </div>
         </form>
       </div>
+      <Footer/>
     </div>
   );
 }
