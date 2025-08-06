@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 import org.springframework.stereotype.Component;
 
+import com.cdac.gaaddimitra.entities.Quotation;
 import com.cdac.gaaddimitra.entities.VeichleRequest;
 
 
@@ -25,13 +26,22 @@ public class QuotationDto {
 	private String description;
 	
 	private VeichleRequest veichleRequest;
+	
+	private Quotation quotations;
+	
+	private int customerid;
 
 	public QuotationDto() {
 		super();
 	}
 
+	
+	
+
+
 	public QuotationDto(int quotationid, int requestid, String sendertype, int senderid, int ammount,
-			LocalDateTime estimatedtime, String description, VeichleRequest veichleRequest) {
+			LocalDateTime estimatedtime, String description, VeichleRequest veichleRequest, Quotation quotations,
+			int customerid) {
 		super();
 		this.quotationid = quotationid;
 		this.requestid = requestid;
@@ -41,7 +51,47 @@ public class QuotationDto {
 		this.estimatedtime = estimatedtime;
 		this.description = description;
 		this.veichleRequest = veichleRequest;
+		this.quotations = quotations;
+		this.customerid = customerid;
 	}
+	
+	
+
+
+
+
+
+	public Quotation getQuotations() {
+		return quotations;
+	}
+
+
+
+
+
+	public void setQuotations(Quotation quotations) {
+		this.quotations = quotations;
+	}
+
+
+
+
+
+	public int getCustomerid() {
+		return customerid;
+	}
+
+
+
+
+
+	public void setCustomerid(int customerid) {
+		this.customerid = customerid;
+	}
+
+
+
+
 
 	public int getQuotationid() {
 		return quotationid;
@@ -107,10 +157,16 @@ public class QuotationDto {
 		this.veichleRequest = veichleRequest;
 	}
 
+
+
+
+
 	@Override
 	public String toString() {
-		return "Quotation [quotationid=" + quotationid + ", requestid=" + requestid + ", sendertype=" + sendertype
+		return "QuotationDto [quotationid=" + quotationid + ", requestid=" + requestid + ", sendertype=" + sendertype
 				+ ", senderid=" + senderid + ", ammount=" + ammount + ", estimatedtime=" + estimatedtime
-				+ ", description=" + description + ", veichleRequest=" + veichleRequest + "]";
+				+ ", description=" + description + ", veichleRequest=" + veichleRequest + ", quotations=" + quotations
+				+ ", customerid=" + customerid + "]";
 	}
+
 }

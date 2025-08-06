@@ -3,17 +3,20 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import axios from "axios";
 import Header from "../components/layout/header";
+import { useAuth } from "../context/AuthContext";
 
 export default function SendQuotationForm() {
   const location = useLocation();
   const navigate = useNavigate();
   const request = location.state;
 
+  const {user} = useAuth();
+
   const [quotation, setQuotation] = useState({
     requestid: request?.requestid || "",
-    // customerid: request?.customerid || "",
-    sendertype: "dealer", // or "dealer" based on context
-    senderid: 1, // Replace with logged-in user ID if available
+    customerid: request?.customerid || "",  
+    sendertype: user?.role, // or "dealer" based on context
+    senderid: user?.userid, // Replace with logged-in user ID if available
     ammount: "",
     estimatedtime: "",
     description: "",
@@ -78,7 +81,7 @@ export default function SendQuotationForm() {
       name="sendertype"
       placeholder="Sender Type"
       required
-      value={quotation.sendertype}
+      value={user.role}
       onChange={handleChange}
       className="w-full border rounded p-2"
     />
@@ -92,7 +95,7 @@ export default function SendQuotationForm() {
       name="senderid"
       placeholder="Sender ID"
       required
-      value={quotation.senderid}
+      value={user.userid}
       onChange={handleChange}
       className="w-full border rounded p-2"
     />

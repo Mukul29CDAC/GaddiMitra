@@ -19,7 +19,6 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.jsx";
 import { useEffect, useState } from "react";
 import ProgressBar from "./ProgressBar.jsx";
-import { Button } from "react-day-picker";
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -37,8 +36,7 @@ export default function Dashboard() {
 
   const profileCompletion = user
     ? (Object.values(user).filter((value) => value !== null && value !== "")
-        .length /
-        Object.keys(user).length) *
+        .length / Object.keys(user).length) *
       100
     : 0;
 
@@ -49,7 +47,8 @@ export default function Dashboard() {
           const customerRequest = await axios.get(
             `http://localhost:8080/requests/showallrequests/${user?.userid}`
           );
-          setRequests(customerRequest.data);
+          console.log("Fetched requests:", customerRequest.data);
+          setRequests(Array.isArray(customerRequest.data) ? customerRequest.data : []);
         } else {
           const response = await axios.get(
             `http://localhost:8080/requests/getAllServiceRequests/${user?.role}`
@@ -59,8 +58,9 @@ export default function Dashboard() {
             `http://localhost:8080/veichles/allVeichles/${user.userid}`
           );
 
-          setRequests(response.data);
-          setVehicles(vehiclesRes.data);
+          console.log("Fetched requests:", response.data);
+          setRequests(Array.isArray(response.data) ? response.data : []);
+          setVehicles(Array.isArray(vehiclesRes.data) ? vehiclesRes.data : []);
         }
       } catch (err) {
         console.error("Failed to fetch data:", err);
@@ -85,8 +85,7 @@ export default function Dashboard() {
   };
 
   const handleDelete = async (vehicleId) => {
-    if (!window.confirm("Are you sure you want to delete this vehicle?"))
-      return;
+    if (!window.confirm("Are you sure you want to delete this vehicle?")) return;
 
     try {
       await axios.delete(
@@ -102,10 +101,10 @@ export default function Dashboard() {
   const handletransaction = () => {
     navigate("/dashboard/transactions");
   };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
-
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
           <div className="flex items-center justify-between">
@@ -129,9 +128,7 @@ export default function Dashboard() {
               <p className="text-sm font-medium text-gray-600 mb-1">
                 Profile Completion
               </p>
-
               <ProgressBar value={profileCompletion} variant="success" />
-
               <p className="text-xs text-right text-gray-500 mt-1">
                 {Math.round(profileCompletion)}%
               </p>
@@ -170,9 +167,7 @@ export default function Dashboard() {
 
           <Card>
             <CardHeader className="flex justify-between items-center pb-2">
-              <CardTitle className="text-sm font-medium">
-                Transactions
-              </CardTitle>
+              <CardTitle className="text-sm font-medium">Transactions</CardTitle>
               <Settings className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
@@ -215,26 +210,27 @@ export default function Dashboard() {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    {requests.slice(0,3).map((request) => (
-                      <div
-                        key={request.id}
-                        className="flex items-center space-x-3 p-3 rounded-lg bg-gray-50"
-                      >
-                        <div className="flex-1">
-                          <h4 className="font-medium">
-                            {request.type} Request
-                          </h4>
-                          <p className="text-sm text-gray-600">
-                            {request.description}
-                          </p>
-                          <p className="text-xs text-gray-400 mt-1">
-                            Status:{" "}
-                            <Badge variant="secondary">{request.status}</Badge>
-                          </p>
+                    {Array.isArray(requests) && requests.length > 0 ? (
+                      requests.slice(0,3).map((request) => (
+                        <div
+                          key={request.id}
+                          className="flex items-center space-x-3 p-3 rounded-lg bg-gray-50"
+                        >
+                          <div className="flex-1">
+                            <h4 className="font-medium">
+                              {request.type} Request
+                            </h4>
+                            <p className="text-sm text-gray-600">
+                              {request.description}
+                            </p>
+                            <p className="text-xs text-gray-400 mt-1">
+                              Status:{" "}
+                              <Badge variant="secondary">{request.status}</Badge>
+                            </p>
+                          </div>
                         </div>
-                      </div>
-                    ))}
-                    {requests.length === 0 && (
+                      ))
+                    ) : (
                       <p className="text-gray-500 text-center py-4">
                         No recent activity
                       </p>
@@ -249,8 +245,63 @@ export default function Dashboard() {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-3">
-                    {/* Quick action buttons based on role */}
-                    {/* ... */}
+                    {user?.role === "customer" && (
+                      <>
+                        <button
+                          className="w-full p-3 text-left rounded-lg hover:bg-gray-50 border"
+                          onClick={() => navigate("/dashboard/request/service")}
+                        >
+                          <h4 className="font-medium">Request Service</h4>
+                          <p className="text-sm text-gray-600">
+                            Get your vehicle serviced
+                          </p>
+                        </button>
+                        <button
+                          className="w-full p-3 text-left rounded-lg hover:bg-gray-50 border"
+                          onClick={() => navigate("/cars")}
+                        >
+                          <h4 className="font-medium">Buy Vehicle</h4>
+                          <p className="text-sm text-gray-600">
+                            Find your perfect car
+                          </p>
+                        </button>
+                      </>
+                    )}
+                    {user?.role === "dealer" && (
+                      <>
+                        <button
+                          onClick={() => navigate("/dashboard/vehicles/add")}
+                          className="w-full p-3 text-left rounded-lg hover:bg-gray-50 border"
+                        >
+                          <h4 className="font-medium">Add Vehicle</h4>
+                          <p className="text-sm text-gray-600">
+                            List a new vehicle
+                          </p>
+                        </button>
+                        <button className="w-full p-3 text-left rounded-lg hover:bg-gray-50 border">
+                          <h4 className="font-medium">Manage Inventory</h4>
+                          <p className="text-sm text-gray-600">
+                            Update vehicle details
+                          </p>
+                        </button>
+                      </>
+                    )}
+                    {user?.role === "service_center" && (
+                      <>
+                        <button className="w-full p-3 text-left rounded-lg hover:bg-gray-50 border">
+                          <h4 className="font-medium">Service Requests</h4>
+                          <p className="text-sm text-gray-600">
+                            View pending requests
+                          </p>
+                        </button>
+                        <button className="w-full p-3 text-left rounded-lg hover:bg-gray-50 border">
+                          <h4 className="font-medium">Create Quotation</h4>
+                          <p className="text-sm text-gray-600">
+                            Provide service quotes
+                          </p>
+                        </button>
+                      </>
+                    )}
                   </div>
                 </CardContent>
               </Card>
@@ -265,56 +316,57 @@ export default function Dashboard() {
                 </CardHeader>
                 <CardContent>
                   <div className="max-h-96 overflow-y-auto space-y-4 pr-1">
-                    {vehicles.map((vehicle) => (
-                      <div
-                        key={vehicle.id}
-                        className="flex items-center space-x-4 p-4 border rounded-lg"
-                      >
-                        <img
-                          src={
-                            vehicle.imageurl
-                              ? vehicle.imageurl
-                              : vehicle.imagedata
-                              ? `data:${vehicle.imagetype};base64,${vehicle.imagedata}`
-                              : "https://via.placeholder.com/80x60?text=Car"
-                          }
-                          alt={`${vehicle.brand} ${vehicle.model}`}
-                          className="w-20 h-15 object-cover rounded"
-                        />
-                        <div className="flex-1">
-                          <h4 className="font-medium">
-                            {vehicle.brand} {vehicle.model}
-                          </h4>
-                          <p className="text-sm text-gray-600">
-                            {vehicle.year} • {vehicle.fueltype} •{" "}
-                            {vehicle.transmission}
-                          </p>
-                          <p className="text-lg font-semibold text-orange-600">
-                            ₹{(parseFloat(vehicle.price) / 100000).toFixed(1)}L
-                          </p>
-                        </div>
-                        <Badge
-                          variant={vehicle.isActive ? "default" : "secondary"}
+                    {Array.isArray(vehicles) && vehicles.length > 0 ? (
+                      vehicles.map((vehicle) => (
+                        <div
+                          key={vehicle.id}
+                          className="flex items-center space-x-4 p-4 border rounded-lg"
                         >
-                          {vehicle.isActive ? "Active" : "Inactive"}
-                        </Badge>
-                        <div className="space-x-2">
-                          <button
-                            onClick={() => handleEdit(vehicle)}
-                            className="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700"
+                          <img
+                            src={
+                              vehicle.imageurl
+                                ? vehicle.imageurl
+                                : vehicle.imagedata
+                                ? `data:${vehicle.imagetype};base64,${vehicle.imagedata}`
+                                : "https://via.placeholder.com/80x60?text=Car"
+                            }
+                            alt={`${vehicle.brand} ${vehicle.model}`}
+                            className="w-20 h-15 object-cover rounded"
+                          />
+                          <div className="flex-1">
+                            <h4 className="font-medium">
+                              {vehicle.brand} {vehicle.model}
+                            </h4>
+                            <p className="text-sm text-gray-600">
+                              {vehicle.year} • {vehicle.fueltype} •{" "}
+                              {vehicle.transmission}
+                            </p>
+                            <p className="text-lg font-semibold text-orange-600">
+                              ₹{(parseFloat(vehicle.price) / 100000).toFixed(1)}L
+                            </p>
+                          </div>
+                          <Badge
+                            variant={vehicle.isActive ? "default" : "secondary"}
                           >
-                            Edit
-                          </button>
-                          <button
-                            onClick={() => handleDelete(vehicle.id)}
-                            className="px-3 py-1 text-sm bg-red-600 text-white rounded hover:bg-red-700"
-                          >
-                            Delete
-                          </button>
+                            {vehicle.isActive ? "Active" : "Inactive"}
+                          </Badge>
+                          <div className="space-x-2">
+                            <button
+                              onClick={() => handleEdit(vehicle)}
+                              className="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700"
+                            >
+                              Edit
+                            </button>
+                            <button
+                              onClick={() => handleDelete(vehicle.id)}
+                              className="px-3 py-1 text-sm bg-red-600 text-white rounded hover:bg-red-700"
+                            >
+                              Delete
+                            </button>
+                          </div>
                         </div>
-                      </div>
-                    ))}
-                    {vehicles.length === 0 && (
+                      ))
+                    ) : (
                       <p className="text-gray-500 text-center py-4">
                         No vehicles in inventory
                       </p>
@@ -332,32 +384,33 @@ export default function Dashboard() {
               </CardHeader>
               <CardContent>
                 <div className="max-h-96 overflow-y-auto space-y-4 pr-1">
-                  {requests.map((request) => (
-                    <div
-                      key={request.requestid}
-                      className="p-4 border rounded-lg cursor-pointer hover:bg-gray-50"
-                      onClick={() =>
-                        navigate("/dashboard/request/details", {
-                          state: request,
-                        })
-                      }
-                    >
-                      <div className="flex justify-between items-start mb-2">
-                        <h4 className="font-medium capitalize">
-                          {request.veichletype} Wheeler
-                        </h4>
-                        <Badge variant="secondary">{request.requestid}</Badge>
+                  {Array.isArray(requests) && requests.length > 0 ? (
+                    requests.map((request) => (
+                      <div
+                        key={request.requestid}
+                        className="p-4 border rounded-lg cursor-pointer hover:bg-gray-50"
+                        onClick={() =>
+                          navigate("/dashboard/request/details", {
+                            state: request,
+                          })
+                        }
+                      >
+                        <div className="flex justify-between items-start mb-2">
+                          <h4 className="font-medium capitalize">
+                            {request.veichletype} Wheeler
+                          </h4>
+                          <Badge variant="secondary">{request.requestid}</Badge>
+                        </div>
+                        <p className="text-gray-600 mb-2">{request.model}</p>
+                        <div className="flex justify-between items-center text-sm text-gray-500">
+                          <span>
+                            Created:{" "}
+                            {new Date(request.datetime).toLocaleDateString()}
+                          </span>
+                        </div>
                       </div>
-                      <p className="text-gray-600 mb-2">{request.model}</p>
-                      <div className="flex justify-between items-center text-sm text-gray-500">
-                        <span>
-                          Created:{" "}
-                          {new Date(request.datetime).toLocaleDateString()}
-                        </span>
-                      </div>
-                    </div>
-                  ))}
-                  {requests.length === 0 && (
+                    ))
+                  ) : (
                     <p className="text-gray-500 text-center py-4">
                       No requests available
                     </p>
@@ -377,9 +430,8 @@ export default function Dashboard() {
                 <div className="text-gray-500 text-center py-8">
                   No transactions available
                   <CardTitle>
-                    {" "}
                     <button
-                      onClick={() => handletransaction()}
+                      onClick={handletransaction}
                       className="px-3 py-2 my-3 text-sm bg-orange-600 text-white rounded hover:bg-orange-800"
                     >
                       View All
