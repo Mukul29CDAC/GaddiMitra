@@ -9,7 +9,7 @@ import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 
 export default function Profile() {
-  const { user, login } = useAuth();
+  const { user, login ,token} = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
     name: user?.name || "",
@@ -30,8 +30,11 @@ export default function Profile() {
     try {
       const response = await axios.put(
         `http://localhost:8080/user/update/${user.userid}`,
-        formData
-      );
+        formData, {
+          headers: {
+            "Authorization": `Bearer ${token}` 
+          }
+    });
       login(response.data); // Update global user state with new data from backend
       alert("Profile updated successfully!");
       setIsEditing(false);

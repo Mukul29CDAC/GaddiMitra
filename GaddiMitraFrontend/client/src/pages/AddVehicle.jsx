@@ -21,7 +21,7 @@ export default function AddVehicle() {
 
   const navigate = useNavigate();
 
-  const {user} = useAuth();
+  const {user, token} = useAuth();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -36,9 +36,11 @@ export default function AddVehicle() {
   payload.append("image", vehicle.imageData);
     try {
       await axios.post(`http://localhost:8080/veichles/addVeichle/${user.userid}`, payload, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },});
+        headers: {
+          "Content-Type": "multipart/form-data",
+          "Authorization": `Bearer ${token}` 
+        },});
+
       alert("Vehicle added successfully!");
       navigate("/dashboard");
     } catch (error) {

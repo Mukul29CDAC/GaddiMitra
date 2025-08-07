@@ -9,7 +9,7 @@ export default function QuotationDetails() {
   const navigate = useNavigate();
   const quotation = location.state;
 
-  const { user } = useAuth();
+  const { user ,token} = useAuth();
 
   useEffect(() => {
     if (!quotation) navigate("/dashboard");

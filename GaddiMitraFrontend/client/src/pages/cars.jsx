@@ -42,7 +42,7 @@ export default function Cars() {
     };
 
     fetchVehicles();
-  }, [token]);
+  }, []);
 
 
 

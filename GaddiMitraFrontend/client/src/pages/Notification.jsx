@@ -4,7 +4,7 @@ import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 
 export default function NotifyPop({ isOpen, onClose }) {
-  const { user } = useAuth();
+  const { user ,token} = useAuth();
   const [notifications, setNotifications] = useState([]);
   const [error, setError] = useState(null);
 
@@ -13,10 +13,16 @@ export default function NotifyPop({ isOpen, onClose }) {
       const fetchData = async () => {
         try {
           if(user.role === "customer"){
-            const response = await axios.get(`http://localhost:8080/getNotification/${user?.userid}`);
+            const response = await axios.get(`http://localhost:8080/getNotification/${user?.userid}`,{
+              headers: {
+                "Authorization": `Bearer ${token}` 
+              }});
             setNotifications(response.data);
           }else{
-              const response = await axios.get(`http://localhost:8080/allNotification/${user?.role}`);
+              const response = await axios.get(`http://localhost:8080/allNotification/${user?.role}`,{
+                headers: {
+                  "Authorization": `Bearer ${token}` 
+                }});
               setNotifications(response.data);
           }
           setError(null);

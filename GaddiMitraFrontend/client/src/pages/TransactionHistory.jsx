@@ -58,7 +58,7 @@ const transactions = [
 ];
 
 export default function TransactionHistory() {
-  const { user } = useAuth();
+  const { user ,token} = useAuth();
 
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);

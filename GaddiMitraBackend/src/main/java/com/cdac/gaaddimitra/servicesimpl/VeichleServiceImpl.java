@@ -65,21 +65,21 @@ public class VeichleServiceImpl {
 	}
 
 	public List<VeichleDto> getDealerVeichle(int dealerid) {
-	    List<VeichleDto> list = new ArrayList<>();
-	    Iterator<Veichles> itr = repoVeichle.findByDealerId(dealerid).iterator();
-	    while (itr.hasNext()) {
-	        Veichles veichle = itr.next(); // Store the current entity
-	        VeichleDto vech = new VeichleDto();
-	        BeanUtils.copyProperties(veichle, vech);
+	    List<Veichles> veichlesFromDb = repoVeichle.findByDealerId(dealerid);
+	    List<VeichleDto> dtoList = new ArrayList<>();
 
-	        if (veichle.getImagedata() != null) {
-	            vech.setImagedata(Base64.getEncoder().encodeToString(veichle.getImagedata()));
+	    for (Veichles entity : veichlesFromDb) {
+	        VeichleDto dto = new VeichleDto();
+	        BeanUtils.copyProperties(entity, dto);
+
+	        if (entity.getImagedata() != null) {
+	            dto.setImagedata(Base64.getEncoder().encodeToString(entity.getImagedata()));
 	        }
 
-	        list.add(vech);
+	        dtoList.add(dto);
 	    }
 
-	    return list;
+	    return dtoList;
 	}
 
 

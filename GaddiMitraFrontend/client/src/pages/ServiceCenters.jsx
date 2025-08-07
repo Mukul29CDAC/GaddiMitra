@@ -14,14 +14,14 @@ const ServiceCenterForm = () => {
   const [serviceCenters, setServiceCenters] = useState([]);
   const [loadingCenters, setLoadingCenters] = useState(true);
 
-  // 🟢 Fetch service centers
+  //  Fetch service centers
   useEffect(() => {
     const fetchServiceCenters = async () => {
       try {
         setLoadingCenters(true);
         const response = await axios.get("http://localhost:8080/servicecenter/allcenters", {
           headers: {
-            Authorization: `Bearer ${token}`, // ✅ include token here
+            Authorization: `Bearer ${token}`, //  include token here
           },
         });
         setServiceCenters(response.data);

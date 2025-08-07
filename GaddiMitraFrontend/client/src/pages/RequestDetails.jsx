@@ -9,7 +9,7 @@ export default function RequestDetails() {
   const navigate = useNavigate();
   const request = location.state;
 
-  const { user } = useAuth();
+  const { user ,token} = useAuth();
 
   useEffect(() => {
     if (!request) navigate("/dashboard");
@@ -21,6 +21,13 @@ export default function RequestDetails() {
     try {
       const response = await axios.post(
         "http://localhost:8080/request/decline",
+         {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            // Corrected line: Provide the token as the value for the Authorization header
+            "Authorization": `Bearer ${token}` 
+          }
+        },
         {
           requestId: request.request?.requestid,
           customerId: request.request?.customerid,

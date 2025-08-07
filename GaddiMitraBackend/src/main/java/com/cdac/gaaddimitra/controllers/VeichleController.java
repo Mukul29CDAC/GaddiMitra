@@ -1,6 +1,7 @@
 package com.cdac.gaaddimitra.controllers;
 
 import java.io.IOException;
+
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,6 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import com.cdac.gaaddimitra.entitiesDTO.VeichleDto;
 import com.cdac.gaaddimitra.servicesimpl.VeichleServiceImpl;
 
-//@CrossOrigin(origins = "*")
 @RestController
 public class VeichleController {
 

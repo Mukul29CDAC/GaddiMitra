@@ -25,6 +25,7 @@ const PaymentPage = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          "Authorization": `Bearer ${token}` 
         },
         body: JSON.stringify({
           amount: quotation.ammount, // The amount from your quotation
@@ -64,7 +65,10 @@ const PaymentPage = () => {
           // Step 4: Call your backend's /verify endpoint
           const verificationResponse = await fetch('http://localhost:8080/api/transaction/verify', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 
+              'Content-Type': 'application/json',
+              "Authorization": `Bearer ${token}` 
+             },
             body: JSON.stringify("Abc",verificationPayload),
           }); 
           if (!verificationResponse.ok) {

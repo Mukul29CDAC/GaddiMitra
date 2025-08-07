@@ -41,11 +41,11 @@ public class SecurityConfig {
             .cors(Customizer.withDefaults())
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(
-                		"/user/login", "/user/register","/veichles/allVeichles",
-                    "/api/auth/**",               // Public auth endpoints
+                		"/user/login", "/user/register","/veichles/allVeichles"
+                    ,"/api/auth/**",               // Public auth endpoints
                     "/swagger-ui/**",             // Swagger UI (optional)
                     "/v3/api-docs/**",            // Swagger docs (optional)
-                    "/actuator/**"                // Actuator endpoints (optional)
+                    "/actuator/**","/veichles/allVeichles/**"                // Actuator endpoints (optional)
                 ).permitAll()
                 .anyRequest().authenticated()     // All other endpoints need authentication
             )

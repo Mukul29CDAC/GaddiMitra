@@ -15,7 +15,6 @@ import com.cdac.gaaddimitra.entitiesDTO.UserDto;
 import com.cdac.gaaddimitra.servicesimpl.UserServiceImpl;
 
 
-//@CrossOrigin(origins="*")
 @RestController
 public class UserController {
 	

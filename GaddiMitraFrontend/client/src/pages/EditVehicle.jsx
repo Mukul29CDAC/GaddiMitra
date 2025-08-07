@@ -8,7 +8,7 @@ export default function EditVehicle() {
   const navigate = useNavigate();
   const vehicleData = location.state;
 
-  console.log("Editing vehicle data:", vehicleData);
+  const{user,token} = useAuth();
 
   const [vehicle, setVehicle] = useState({
     id: vehicleData?.id || "",
@@ -38,7 +38,10 @@ export default function EditVehicle() {
   const handleUpdate = async (e) => {
     e.preventDefault();
     try {
-      await axios.put(`http://localhost:8080/vehicles/update/${vehicle.id}`, vehicle);
+      await axios.put(`http://localhost:8080/vehicles/update/${vehicle.id}`, vehicle,{
+        headers: {
+          "Authorization": `Bearer ${token}` 
+        }});
       alert("Vehicle updated successfully!");
       navigate("/dashboard");
     } catch (error) {
