@@ -248,10 +248,12 @@ public class VeichleRequest {
 		return "VeichleRequest [requestid=" + requestid + ", customerid=" + customerid + ", requesttype=" + requesttype
 				+ ", veichletype=" + veichletype + ", brand=" + brand + ", model=" + model + ", datetime=" + datetime
 				+ ", description=" + description + ", status=" + status + ", imagename=" + imagename + ", imagetype="
-				+ imagetype + ", imagedata=" + Arrays.toString(imagedata) + ", customer=" + customer + ", notification="
-				+ notification + ", quotations=" + quotations + "]";
+				+ imagetype  + "]";
 	}
 
+
+
+	
 
 
 

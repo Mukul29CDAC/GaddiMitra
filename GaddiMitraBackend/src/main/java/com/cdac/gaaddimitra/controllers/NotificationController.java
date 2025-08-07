@@ -40,23 +40,21 @@ public class NotificationController {
 //	private RestTemplate restTemplate;
 	
 	public Notification createNotification(VeichleRequest vec,String type) {
-		
-		System.out.println("NotificationController.createNotification() called"+vec);
+
 		Notification notify = new Notification();
     	notify.setRequestid(vec.getRequestid());
 		notify.setMessage(vec.getDescription());
 		notify.setDatetime(vec.getDatetime());
-		notify.setBrand(vec.getBrand());
-		notify.setModel(vec.getModel());
 		notify.setDatetime(LocalDateTime.now() );
 		notify.setRecievertype(type);
-		notify.setVeichletype(vec.getVeichletype());
+//		notify.setVeichletype(vec.getVeichletype());
 		notify.setCustomerid(vec.getCustomerid()); //vec.getCustomerid());
 		notify.setStatus(NotificationStatus.PENDING);
 		repoNotify.save(notify);
     	return notify;
 	}
-	
+
+	   
 	public void sendNotification(Notification msg) {
 //		new RestTemplate().postForEntity("http://localhost:8080/servicecenter/getNotify", msg, Notification.class);
 	}

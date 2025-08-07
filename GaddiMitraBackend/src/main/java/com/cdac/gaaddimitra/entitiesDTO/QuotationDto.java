@@ -30,6 +30,8 @@ public class QuotationDto {
 	private Quotation quotations;
 	
 	private int customerid;
+	
+	private String sendername;
 
 	public QuotationDto() {
 		super();
@@ -41,7 +43,7 @@ public class QuotationDto {
 
 	public QuotationDto(int quotationid, int requestid, String sendertype, int senderid, int ammount,
 			LocalDateTime estimatedtime, String description, VeichleRequest veichleRequest, Quotation quotations,
-			int customerid) {
+			int customerid,String sendername) {
 		super();
 		this.quotationid = quotationid;
 		this.requestid = requestid;
@@ -53,6 +55,7 @@ public class QuotationDto {
 		this.veichleRequest = veichleRequest;
 		this.quotations = quotations;
 		this.customerid = customerid;
+		this.sendername = sendername;
 	}
 	
 	
@@ -61,9 +64,25 @@ public class QuotationDto {
 
 
 
-	public Quotation getQuotations() {
-		return quotations;
+	public String getSendername() {
+		return sendername;
 	}
+
+
+
+
+
+	public void setSendername(String sendername) {
+		this.sendername = sendername;
+	}
+
+
+
+
+//
+//	public Quotation getQuotations() {
+//		return quotations;
+//	}
 
 
 
@@ -149,9 +168,9 @@ public class QuotationDto {
 		this.description = description;
 	}
 
-	public VeichleRequest getVeichleRequest() {
-		return veichleRequest;
-	}
+//	public VeichleRequest getVeichleRequest() {
+//		return veichleRequest;
+//	}
 
 	public void setVeichleRequest(VeichleRequest veichleRequest) {
 		this.veichleRequest = veichleRequest;
@@ -166,7 +185,12 @@ public class QuotationDto {
 		return "QuotationDto [quotationid=" + quotationid + ", requestid=" + requestid + ", sendertype=" + sendertype
 				+ ", senderid=" + senderid + ", ammount=" + ammount + ", estimatedtime=" + estimatedtime
 				+ ", description=" + description + ", veichleRequest=" + veichleRequest + ", quotations=" + quotations
-				+ ", customerid=" + customerid + "]";
+				+ ", customerid=" + customerid + ", sendername=" + sendername + "]";
 	}
+
+
+
+
+
 
 }
