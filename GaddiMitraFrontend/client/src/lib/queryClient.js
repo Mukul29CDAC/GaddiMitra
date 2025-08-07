@@ -1,6 +1,6 @@
 import { QueryClient } from "@tanstack/react-query";
 
-// Optional mock fallback (only used if API fails or not available)
+// Optional mock fallback
 const mockDB = {
   "/api/dashboard/stats": {
     totalVehicles: 10,
@@ -34,71 +34,27 @@ const mockDB = {
   },
 };
 
-// API utility function
-export async function apiRequestMultiple(urls) {
-  try {
-    const responses = await Promise.all(
-      urls.map((url) =>
-        fetch(url, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }).then(async (res) => {
-          if (!res.ok) {
-            const text = await res.text();
-            throw new Error(`Error fetching ${url}:\n${res.status} - ${text}`);
-          }
-          return res.json();
-        })
-      )
-    );
-    return responses;
-  } catch (error) {
-    console.error("❌ API error in apiRequestMultiple:", error);
-    throw error;
-  }
-}
-
-// QueryClient setup
 export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       queryFn: async ({ queryKey }) => {
         const key = queryKey[0];
-        const id = queryKey[1];
+       
 
-        if (key === "/api/vehicles+users") {
-          // Note: This key is different from "/api/vehicles+Requests"
-          const [vehicles,customerrequest,totalVehicles,totalRequest,totalQuotation] = await apiRequestMultiple([
-            "http://localhost:8080/veichles/allVeichles",
-         
-          ]);
-          return {
-            vehicles,
-          };
+
+
+        if (key === "/api/transactions") {
+          return []; // Placeholder
         }
 
-         if (key === "/api/transactions") {
-
-           // In a real scenario, you would fetch this from an API endpoint
-
-          //  const response = await axios.get(`http://localhost:8080/transactions/${id}`);
-
-          //  return response.data;
-
-           return []; // Returning empty array for now
-
-        }
-        // fallback to mock
         if (mockDB[key]) {
           return mockDB[key];
         }
 
         throw new Error(`No handler or mock data for ${key}`);
       },
-      staleTime: 1000 * 60 * 5, // 5 minutes
-      retry: 1, // retry once on failure
+      staleTime: 1000 * 60 * 5,
+      retry: 1,
       refetchOnWindowFocus: false,
     },
   },

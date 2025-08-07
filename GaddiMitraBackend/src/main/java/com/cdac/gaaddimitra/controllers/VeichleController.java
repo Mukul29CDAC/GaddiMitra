@@ -20,7 +20,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import com.cdac.gaaddimitra.entitiesDTO.VeichleDto;
 import com.cdac.gaaddimitra.servicesimpl.VeichleServiceImpl;
 
-@CrossOrigin(origins = "*")
+//@CrossOrigin(origins = "*")
 @RestController
 public class VeichleController {
 

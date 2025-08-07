@@ -14,12 +14,15 @@ import { Badge } from "../components/ui/badge.jsx";
 import { Search, Filter } from "lucide-react";
 import Header from "../components/layout/header.jsx";
 import Footer from "../components/layout/footer.jsx";
-import { navigate } from "wouter/use-browser-location";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { useAuth } from "../context/AuthContext.jsx";
 
 export default function Cars() {
   const [searchTerm, setSearchTerm] = useState("");
-
+  const [vehicles,setVehicles] = useState([]);
+  const [error,setError] = useState();
+  const[isLoading,setIsLoading] = useState(false);
   const [filters, setFilters] = useState({
     priceRange: "",
     fueltype: "",
@@ -27,11 +30,22 @@ export default function Cars() {
     bodytype: "",
   });
 
-  const { data, isLoading } = useQuery({
-    queryKey: ["/api/vehicles+users"],
-  });
+  useEffect(() => {
+    const fetchVehicles = async () => {
+      try {
+        const response = await axios.get("http://localhost:8080/veichles/allVeichles");
+        setVehicles(response.data);
+      } catch (err) {
+        console.error("Error fetching vehicles:", err);
+        setError("Failed to load vehicles");
+      } 
+    };
 
-  const vehicles = data?.vehicles || [];
+    fetchVehicles();
+  }, [token]);
+
+
+
 
   const filteredVehicles = vehicles.filter((vehicle) => {
     const matchesSearch =

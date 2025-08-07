@@ -44,8 +44,6 @@ const PaymentPage = () => {
 
       // The backend returns the order details as a string, so we parse it to JSON
       const order = await createOrderResponse.json();
-      console.log(order);
-
       // Step 2: Configure the Razorpay options object
       const options = {
         key: razorpayKey, // Your public key from .env
@@ -68,12 +66,10 @@ const PaymentPage = () => {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify("Abc",verificationPayload),
-          });
-          console.log(verificationResponse);    
+          }); 
           if (!verificationResponse.ok) {
              throw new Error("Payment verification failed.");
           }
-          
           alert("Payment successful and verified!");
           navigate("/dashboard"); // Or a dedicated success page
         },
