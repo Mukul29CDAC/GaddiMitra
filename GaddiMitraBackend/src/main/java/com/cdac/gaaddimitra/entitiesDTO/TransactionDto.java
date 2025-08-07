@@ -11,7 +11,7 @@ public class TransactionDto {
 	private int requestId;
 	private String receiverType;
 	private int receiverId;
-	private int veichleId;
+
 	private String transactionType;
 	private int amount;
 	private String status;
@@ -22,14 +22,14 @@ public class TransactionDto {
 	}
 	
 	public TransactionDto(int transactionId, int customerId, int requestId, String receiverType, int receiverId,
-			int veichleId, String transactionType, int amount, String status, LocalDateTime dateTime) {
+			 String transactionType, int amount, String status, LocalDateTime dateTime) {
 		super();
 		this.transactionId = transactionId;
 		this.customerId = customerId;
 		this.requestId = requestId;
 		this.receiverType = receiverType;
 		this.receiverId = receiverId;
-		this.veichleId = veichleId;
+//		this.veichleId = veichleId;
 		this.transactionType = transactionType;
 		this.amount = amount;
 		this.status = status;
@@ -76,13 +76,7 @@ public class TransactionDto {
 		this.receiverId = receiverId;
 	}
 
-	public int getVeichleId() {
-		return veichleId;
-	}
 
-	public void setVeichleId(int veichleId) {
-		this.veichleId = veichleId;
-	}
 
 	public String getTransactionType() {
 		return transactionType;
@@ -119,8 +113,7 @@ public class TransactionDto {
 	@Override
 	public String toString() {
 		return "TransactionDto [transactionId=" + transactionId + ", customerId=" + customerId + ", requestId="
-				+ requestId + ", receiverType=" + receiverType + ", receiverId=" + receiverId + ", veichleId="
-				+ veichleId + ", transactionType=" + transactionType + ", amount=" + amount + ", status=" + status
+				+ requestId + ", receiverType=" + receiverType + ", receiverId=" + receiverId + ", transactionType=" + transactionType + ", amount=" + amount + ", status=" + status
 				+ ", dateTime=" + dateTime + "]";
 	}
 					
