@@ -10,9 +10,8 @@ import { Button } from "../ui/button";
 //  const { data: stats } = useQuery({ queryKey: ["/api/dashboard/stats"] });
 
 
-export default function VehicleCarasouel() {
-    const { data: info } = useQuery({ queryKey: ["/api/vehicles+users"] });
-const vehicles = info?.vehicles || [];
+export default function VehicleCarasouel({vehicles}) {
+   
   return (
     <section className="py-5 bg-gray-100" id="testimonials">
       <div className="container mx-auto px-4">

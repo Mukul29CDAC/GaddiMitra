@@ -6,7 +6,7 @@ import { useAuth } from "../context/AuthContext.jsx";
 import Footer from "../components/layout/footer.jsx";
 
 export default function ServiceVehicleForm() {
-  const {user} = useAuth();
+  const {user,token} = useAuth();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     requesttype: "service",
@@ -39,6 +39,7 @@ export default function ServiceVehicleForm() {
       await axios.post("http://localhost:8080/requests/addRequest", payload,{
       headers: {
         "Content-Type": "multipart/form-data",
+        "Authorization":`Bearer ${token}` 
       },});
       alert("Vehicle request submitted successfully!");
       navigate("/dashboard");

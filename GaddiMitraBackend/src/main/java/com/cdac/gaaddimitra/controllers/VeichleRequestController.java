@@ -22,7 +22,6 @@ import com.cdac.gaaddimitra.entitiesDTO.VeichleRequestDto;
 //import com.cdac.gaaddimitra.observer.VeichleRequestPublisher;
 import com.cdac.gaaddimitra.servicesimpl.VeichleRequestServiceImpl;
 
-@CrossOrigin(origins = "*")
 @RestController
 public class VeichleRequestController {
 	
@@ -30,7 +29,7 @@ public class VeichleRequestController {
 	VeichleRequestServiceImpl service;
 	
 
-    @GetMapping("/requests/showallrequests/{id}")
+    @GetMapping("requests/showallrequests/{id}")
     public ResponseEntity<List<VeichleRequestDto>> allRequest(@PathVariable int id) {
        
         List<VeichleRequestDto> requests = service.allRequests(id);
@@ -49,13 +48,13 @@ public class VeichleRequestController {
 		return "Request Added";
 	}
 	
-	@GetMapping("/veichleRequest/total")
+	@GetMapping("veichleRequest/total")
 	public long totalRequest() {
 		return service.totalRequests();
 	}
 	
 	// requests for a service center
-	@GetMapping("/requests/getAllServiceRequests/{role}")
+	@GetMapping("requests/getAllServiceRequests/{role}")
 	public ResponseEntity<List<VeichleRequestDto>> getServiceRequests(@PathVariable String role) {
 		List<VeichleRequestDto> veichleRequests = service.getAllServiceRequest(role);
 		if (veichleRequests.isEmpty()) {
@@ -65,7 +64,7 @@ public class VeichleRequestController {
 	}
 	
 	
-	@PatchMapping("/veichleRequest/update")
+	@PatchMapping("veichleRequest/update")
 	public String updateRequest() {
 		return null;
 	}

@@ -22,13 +22,12 @@ import ProgressBar from "./ProgressBar.jsx";
 
 export default function Dashboard() {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, token } = useAuth();
 
   const { data: stats } = useQuery({ queryKey: ["/api/dashboard/stats"] });
 
   const { data: info } = useQuery({
-    queryKey: ["/api/vehicles+users", user?.userid],
-    enabled: !!user?.userid,
+    queryKey: ["/api/vehicles"]
   });
 
   const [vehicles, setVehicles] = useState([]);
@@ -37,37 +36,64 @@ export default function Dashboard() {
 
   const profileCompletion = user
     ? (Object.values(user).filter((value) => value !== null && value !== "")
-        .length / Object.keys(user).length) *
-      100
+      .length / Object.keys(user).length) *
+    100
     : 0;
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        if (user?.role === "customer") {
+        if (user?.role === "customer" || user?.role === "servicecenter") {
+          const response = await axios.get(
+            `http://localhost:8080/requests/getAllServiceRequests/${user?.role}`
+            , {
+              headers: {
+                "Authorization": `Bearer ${token}`
+              },
+            }
+          );
           const customerRequest = await axios.get(
             `http://localhost:8080/requests/showallrequests/${user?.userid}`
+            , {
+              headers: {
+                "Authorization": `Bearer ${token}`
+              },
+            }
           );
           const customerQuotation = await axios.get(
             `http://localhost:8080/quotation/allQuotation/${user?.userid}/${user?.role}`
+            , {
+              headers: {
+                "Authorization": `Bearer ${token}`
+              },
+            }
           );
           setQuotation(Array.isArray(customerQuotation.data) ? customerQuotation.data : []);
           setRequests(Array.isArray(customerRequest.data) ? customerRequest.data : []);
-        } else {
-          const response = await axios.get(
-            `http://localhost:8080/requests/getAllServiceRequests/${user?.role}`
-          );
-
-          const vehiclesRes = await axios.get(
-            `http://localhost:8080/veichles/allVeichles/${user.userid}`
-          );
-
-            const customerQuotation = await axios.get(
-            `http://localhost:8080/quotation/allQuotation/${user?.userid}/${user?.role}`
-          );
-          setQuotation(Array.isArray(customerQuotation.data) ? customerQuotation.data : []);
           setRequests(Array.isArray(response.data) ? response.data : []);
+        } else {
+          const vehiclesRes = await axios.get(
+            `http://localhost:8080/veichles/allVeichles/${user.userid}`,
+            {
+              headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+              },
+
+            }
+          );
+          const customerQuotation = await axios.get(
+            `http://localhost:8080/quotation/allQuotation/${user?.userid}/${user?.role}`
+            , {
+              headers: {
+                "Authorization": `Bearer ${token}`
+              },
+            }
+          );
           setVehicles(Array.isArray(vehiclesRes.data) ? vehiclesRes.data : []);
+          setQuotation(Array.isArray(customerQuotation.data) ? customerQuotation.data : []);
+
+
         }
       } catch (err) {
         console.error("Failed to fetch data:", err);
@@ -97,6 +123,11 @@ export default function Dashboard() {
     try {
       await axios.delete(
         `http://localhost:8080/veichles/removeVeichle/${vehicleId}`
+        , {
+          headers: {
+            "Authorization": `Bearer ${token}`
+          },
+        }
       );
       alert("Vehicle deleted successfully!");
       setVehicles((prev) => prev.filter((v) => v.id !== vehicleId));
@@ -121,14 +152,13 @@ export default function Dashboard() {
                 Manage your automotive activities
               </p>
               <Badge
-                className={`mt-2 ${
-                  roleColors[user?.role] || roleColors.customer
-                }`}
+                className={`mt-2 ${roleColors[user?.role] || roleColors.customer
+                  }`}
               >
-                {user?.role === "service_center"
+                {user?.role === "servicecenter"
                   ? "Service Center"
                   : user?.role?.charAt(0).toUpperCase() +
-                      user?.role?.slice(1) || "Customer"}
+                  user?.role?.slice(1) || "Customer"}
               </Badge>
             </div>
             <div className="w-1/4">
@@ -208,7 +238,7 @@ export default function Dashboard() {
             <TabsTrigger value="requests">Requests</TabsTrigger>
             <TabsTrigger value="quotations">Quotations</TabsTrigger>
             <TabsTrigger value="transactions">Transactions</TabsTrigger>
-            
+
 
           </TabsList>
 
@@ -221,7 +251,7 @@ export default function Dashboard() {
                 <CardContent>
                   <div className="space-y-4">
                     {Array.isArray(requests) && requests.length > 0 ? (
-                      requests.slice(0,3).map((request) => (
+                      requests.slice(0, 3).map((request) => (
                         <div
                           key={request.id}
                           className="flex items-center space-x-3 p-3 rounded-lg bg-gray-50"
@@ -328,6 +358,7 @@ export default function Dashboard() {
                   <div className="max-h-96 overflow-y-auto space-y-4 pr-1">
                     {Array.isArray(vehicles) && vehicles.length > 0 ? (
                       vehicles.map((vehicle) => (
+
                         <div
                           key={vehicle.id}
                           className="flex items-center space-x-4 p-4 border rounded-lg"
@@ -337,8 +368,8 @@ export default function Dashboard() {
                               vehicle.imageurl
                                 ? vehicle.imageurl
                                 : vehicle.imagedata
-                                ? `data:${vehicle.imagetype};base64,${vehicle.imagedata}`
-                                : "https://via.placeholder.com/80x60?text=Car"
+                                  ? `data:${vehicle.imagetype};base64,${vehicle.imagedata}`
+                                  : "https://via.placeholder.com/80x60?text=Car"
                             }
                             alt={`${vehicle.brand} ${vehicle.model}`}
                             className="w-20 h-15 object-cover rounded"
@@ -430,7 +461,7 @@ export default function Dashboard() {
             </Card>
           </TabsContent>
 
-           <TabsContent value="quotations">
+          <TabsContent value="quotations">
             <Card>
               <CardHeader>
                 <CardTitle>Quotations</CardTitle>
@@ -450,7 +481,7 @@ export default function Dashboard() {
                       >
                         <div className="flex justify-between items-start mb-2">
                           <h4 className="font-medium capitalize">
-                            FROM : {quotation.sendername} 
+                            FROM : {quotation.sendername}
                           </h4>
                           <Badge variant="secondary">{quotation.requestid}</Badge>
                         </div>

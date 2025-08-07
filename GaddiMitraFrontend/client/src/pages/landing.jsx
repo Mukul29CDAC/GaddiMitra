@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "../components/ui/button.jsx";
 import { Input } from "../components/ui/input.jsx";
@@ -17,6 +17,7 @@ import TestimonialSection from "../components/layout/Testimonials.jsx";
 import VehicleListWithFilters from "../components/layout/VehicleListWithFilters.jsx";
 import VehicleCarasouel from "../components/layout/VehicleCarasouel.jsx";
 import FeatureSection from "../components/layout/FeatureSection.jsx";
+import axios from "axios";
 
 
 
@@ -24,12 +25,30 @@ export default function Landing() {
     
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const[mockVehicles ,setVehicles] = useState([]);
+  const token = localStorage.getItem("token");
 
     const { data: info } = useQuery({
-  queryKey: ["/api/vehicles+users"]
+  queryKey: ["/api/vehicles"]
   });
 
-  const mockVehicles = info?.vehicles || [];
+  useEffect(() => {
+    const fetchVehicles = async () => {
+      try {
+        const response = await axios.get("http://localhost:8080/veichles/allVeichles");
+        console.log(response.data);
+        setVehicles(response.data);
+      } catch (err) {
+        console.error("Error fetching vehicles:", err);
+        setError("Failed to load vehicles");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchVehicles();
+  }, [token]);
+
 
   const [searchTerm, setSearchTerm] = useState("");
   const [filters, setFilters] = useState({
@@ -194,10 +213,10 @@ export default function Landing() {
        <FeatureSection/>
 
       
-           <VehicleCarasouel/>
+           <VehicleCarasouel vehicles={mockVehicles}/>
            {/* Features Section */}
          
-      <VehicleListWithFilters/>
+      <VehicleListWithFilters vehicles={mockVehicles}/>
 
       
       <TestimonialSection />

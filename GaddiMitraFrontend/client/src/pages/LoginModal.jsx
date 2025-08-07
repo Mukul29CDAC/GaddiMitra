@@ -26,6 +26,8 @@ export default function LoginModal({ isOpen, onClose }) {
   loginUser(loginData, {
     onSuccess: (userData) => {
       if (userData && userData.email) {
+        //  console.log(userData.name);
+        localStorage.setItem("token", userData.token);
         setAuthUser(userData); // store user globally in AuthContext
         alert("Login successful!");
         onClose();

@@ -24,7 +24,6 @@ import com.cdac.gaaddimitra.entitiesDTO.VeichleRequestDto;
 import com.cdac.gaaddimitra.repository.NotificationRepo;
 import com.cdac.gaaddimitra.utility.NotificationStatus;
 
-@CrossOrigin(origins = "*")
 @Component
 @RestController
 public class NotificationController {

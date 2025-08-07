@@ -25,7 +25,6 @@ import com.cdac.gaaddimitra.services.QuotationServiceIntf;
 import com.cdac.gaaddimitra.servicesimpl.QuotationServiceImpl;
 import com.cdac.gaaddimitra.servicesimpl.ServiceCenterImpl;
 
-@CrossOrigin(origins = "*")
 @RestController
 public class ServiceCenterController {
 	

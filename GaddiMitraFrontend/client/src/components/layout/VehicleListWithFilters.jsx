@@ -3,30 +3,37 @@ import axios from "axios";
 import { Card } from "../ui/card";
 import { Badge } from "../ui/badge.jsx";
 import { Button } from "../ui/button";
+import { get } from "react-hook-form";
 // import { useQuery } from "@tanstack/react-query";
 // import {Button} from "../ui/button.jsx";
 
-export default function VehicleListWithFilters() {
-  const [vehicles, setVehicles] = useState([]);
+export default function VehicleListWithFilters({vehicles}) {
+  // const [vehicles, setVehicles] = useState([]);
   const [filters, setFilters] = useState({
     fueltype: "",
     transmission: "",
     bodytype: "",
   });
 
-  useEffect(() => {
-    fetchVehicles();
-  }, []);
+  // const token = localStorage.getItems("token");
 
-  const fetchVehicles = async () => {
-    try {
-      const response = await axios.get("http://localhost:8080/veichles/allVeichles");
-      // console.log("Fetched vehicles:", response.data);
-      setVehicles(response.data || []);
-    } catch (error) {
-      console.error("Error fetching vehicles:", error);
-    }
-  };
+  // useEffect(() => {
+  //   fetchVehicles();
+  // }, []);
+
+  // const fetchVehicles = async () => {
+  //   try {
+  //     const response = await axios.get("http://localhost:8080/veichles/allVeichles", {
+  //         headers: {
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //       });
+  //     // console.log("Fetched vehicles:", response.data);
+  //     setVehicles(response.data || []);
+  //   } catch (error) {
+  //     console.error("Error fetching vehicles:", error);
+  //   }
+  // };
 
 
   const handleFilterChange = (key, value) => {

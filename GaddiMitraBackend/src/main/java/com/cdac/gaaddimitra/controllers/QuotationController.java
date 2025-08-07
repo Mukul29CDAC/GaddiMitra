@@ -18,7 +18,6 @@ import com.cdac.gaaddimitra.entitiesDTO.VeichleDto;
 import com.cdac.gaaddimitra.entitiesDTO.VeichleRequestDto;
 import com.cdac.gaaddimitra.servicesimpl.QuotationServiceImpl;
 
-@CrossOrigin(origins = "*")
 @RestController
 public class QuotationController {
 

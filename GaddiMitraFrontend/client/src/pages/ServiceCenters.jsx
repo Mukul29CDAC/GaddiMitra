@@ -4,20 +4,26 @@ import { useForm } from "react-hook-form";
 import Header from "../components/layout/header";
 import Footer from "../components/layout/footer";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 const ServiceCenterForm = () => {
+  const { token } = useAuth(); // ✅ fetch token from context
   const navigate = useNavigate();
   const { register, handleSubmit, formState: { errors, isSubmitting }, reset } = useForm();
   const [imageFile, setImageFile] = useState(null);
   const [serviceCenters, setServiceCenters] = useState([]);
   const [loadingCenters, setLoadingCenters] = useState(true);
 
-  // 🟢 Fetch all service centers on component mount
+  //  Fetch service centers
   useEffect(() => {
     const fetchServiceCenters = async () => {
       try {
         setLoadingCenters(true);
-        const response = await axios.get("http://localhost:8080/servicecenter/allcenters");
+        const response = await axios.get("http://localhost:8080/servicecenter/allcenters", {
+          headers: {
+            Authorization: `Bearer ${token}`, //  include token here
+          },
+        });
         setServiceCenters(response.data);
       } catch (error) {
         console.error("Error fetching service centers:", error);
@@ -27,13 +33,13 @@ const ServiceCenterForm = () => {
     };
 
     fetchServiceCenters();
-  }, []);
+  }, [token]);
 
-  const centersdetails = (center) =>{
-    navigate("/servicenter/details",{state:{center}},);
-  } 
+  const centersdetails = (center) => {
+    navigate("/servicenter/details", { state: { center } });
+  };
 
-  // 🟢 Handle form submission
+  // 🟢 Submit service request
   const onSubmit = async (data) => {
     const payload = new FormData();
 
@@ -49,7 +55,12 @@ const ServiceCenterForm = () => {
     payload.append("image", imageFile);
 
     try {
-      const response = await axios.post("http://localhost:8080/requests/addRequest", payload);
+      const response = await axios.post("http://localhost:8080/requests/addRequest", payload, {
+        headers: {
+          Authorization: `Bearer ${token}`, // ✅ include token here too
+        },
+      });
+
       if (response.status === 200) {
         alert("✅ Service request submitted successfully!");
         reset();
@@ -59,10 +70,10 @@ const ServiceCenterForm = () => {
       }
     } catch (error) {
       alert("❗ Error submitting request.");
+      console.error(error);
     }
   };
 
-  // 🟢 Helper: Show preview of selected image
   const imagePreviewUrl = imageFile ? URL.createObjectURL(imageFile) : null;
 
   return (
@@ -83,7 +94,6 @@ const ServiceCenterForm = () => {
         <div className="bg-white shadow-2xl border border-slate-100 rounded-2xl p-8 w-full max-w-lg mx-auto flex-1">
           <h3 className="text-2xl font-bold mb-6 text-gray-800">Book Best Services</h3>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            {/* Brand */}
             <div>
               <input
                 type="text"
@@ -95,7 +105,6 @@ const ServiceCenterForm = () => {
               {errors.brand && <span className="input-error">Brand is required</span>}
             </div>
 
-            {/* Model */}
             <div>
               <input
                 type="text"
@@ -106,7 +115,6 @@ const ServiceCenterForm = () => {
               {errors.model && <span className="input-error">Model is required</span>}
             </div>
 
-            {/* Vehicle Type */}
             <div>
               <select
                 {...register("veichletype", { required: true })}
@@ -119,7 +127,6 @@ const ServiceCenterForm = () => {
               {errors.veichletype && <span className="input-error">Vehicle type is required</span>}
             </div>
 
-            {/* Description */}
             <div>
               <textarea
                 rows={3}
@@ -130,7 +137,6 @@ const ServiceCenterForm = () => {
               {errors.description && <span className="input-error">Description is required</span>}
             </div>
 
-            {/* Image Upload (custom style) */}
             <div>
               <label className="block mb-1 font-medium text-gray-700">Upload image*</label>
               <div className="flex items-center gap-4">
@@ -141,7 +147,6 @@ const ServiceCenterForm = () => {
                   onChange={(e) => setImageFile(e.target.files[0])}
                   className="file-input"
                   id="image-upload"
-                  style={{ background: 'none' }}
                 />
                 {imagePreviewUrl && (
                   <img
@@ -153,7 +158,6 @@ const ServiceCenterForm = () => {
               </div>
             </div>
 
-            {/* Submit Button */}
             <button
               type="submit"
               disabled={isSubmitting}
@@ -179,8 +183,8 @@ const ServiceCenterForm = () => {
             {serviceCenters.map((center, index) => (
               <div
                 key={index}
-                onClick={()=>centersdetails(center)}
-                className="bg-white border border-slate-200 shadow-md hover:shadow-lg hover:scale-[1.03] transition-transform p-6 rounded-2xl flex flex-col gap-1 group"
+                onClick={() => centersdetails(center)}
+                className="bg-white border border-slate-200 shadow-md hover:shadow-lg hover:scale-[1.03] transition-transform p-6 rounded-2xl flex flex-col gap-1 group cursor-pointer"
               >
                 <h3 className="text-lg font-semibold text-gray-800 mb-1 group-hover:text-orange-600">{center.name}</h3>
                 <div className="text-gray-700 text-sm mb-2">{center.address}</div>
@@ -198,7 +202,7 @@ const ServiceCenterForm = () => {
 
       <Footer />
 
-      {/* Tailwind custom style overrides for inputs */}
+      {/* Tailwind overrides */}
       <style>{`
         .input-field {
           border: 1.5px solid #f3f4f6;
