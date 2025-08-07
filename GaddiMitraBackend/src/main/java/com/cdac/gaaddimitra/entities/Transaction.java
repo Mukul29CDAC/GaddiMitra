@@ -34,9 +34,7 @@ public class Transaction {
 	@Column(name = "receiverid")
 	private int receiverId;
 
-	@ManyToOne
-	@JoinColumn(name = "veichleid", nullable = false)
-	private Veichles veichle;
+
 
 	@Column(name = "transactiontype")
 	private String transactionType;
@@ -59,14 +57,14 @@ public class Transaction {
 	}
 
 	public Transaction(int transactionid, Customer customer, VeichleRequest request, String receiverType,
-			int receiverId, Veichles veichle, String transactionType, int amount, String status,
+			int receiverId, String transactionType, int amount, String status,
 			LocalDateTime dateTime) {
 		this.transactionid = transactionid;
 		this.customer = customer;
 		this.request = request;
 		this.receiverType = receiverType;
 		this.receiverId = receiverId;
-		this.veichle = veichle;
+//		this.veichle = veichle;
 		this.transactionType = transactionType;
 		this.amount = amount;
 		this.status = status;
@@ -113,13 +111,7 @@ public class Transaction {
 		this.receiverId = receiverId;
 	}
 
-	public Veichles getVeichle() {
-		return veichle;
-	}
 
-	public void setVeichle(Veichles veichle) {
-		this.veichle = veichle;
-	}
 
 	public String getTransactionType() {
 		return transactionType;
@@ -164,7 +156,7 @@ public class Transaction {
 	@Override
 	public String toString() {
 		return "Transaction{" + "transactionid=" + transactionid + ", customer=" + customer + ", request=" + request
-				+ ", receiverType='" + receiverType + '\'' + ", receiverId=" + receiverId + ", veichle=" + veichle
+				+ ", receiverType='" + receiverType + '\'' + ", receiverId=" + receiverId 
 				+ ", transactionType='" + transactionType + '\'' + ", amount=" + amount + ", status='" + status + '\''
 				+ ", dateTime=" + dateTime + '}';
 	}

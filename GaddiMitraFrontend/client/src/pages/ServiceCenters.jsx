@@ -3,8 +3,10 @@ import axios from "axios";
 import { useForm } from "react-hook-form";
 import Header from "../components/layout/header";
 import Footer from "../components/layout/footer";
+import { useNavigate } from "react-router-dom";
 
 const ServiceCenterForm = () => {
+  const navigate = useNavigate();
   const { register, handleSubmit, formState: { errors, isSubmitting }, reset } = useForm();
   const [imageFile, setImageFile] = useState(null);
   const [serviceCenters, setServiceCenters] = useState([]);
@@ -26,6 +28,10 @@ const ServiceCenterForm = () => {
 
     fetchServiceCenters();
   }, []);
+
+  const centersdetails = (center) =>{
+    navigate("/servicenter/details",{state:{center}},);
+  } 
 
   // 🟢 Handle form submission
   const onSubmit = async (data) => {
@@ -173,6 +179,7 @@ const ServiceCenterForm = () => {
             {serviceCenters.map((center, index) => (
               <div
                 key={index}
+                onClick={()=>centersdetails(center)}
                 className="bg-white border border-slate-200 shadow-md hover:shadow-lg hover:scale-[1.03] transition-transform p-6 rounded-2xl flex flex-col gap-1 group"
               >
                 <h3 className="text-lg font-semibold text-gray-800 mb-1 group-hover:text-orange-600">{center.name}</h3>

@@ -39,7 +39,7 @@ public class TransactionController {
         String razorpayOrderId = order.get("id");
         
         transactionService.createInitialTransaction(tDto, razorpayOrderId, order.get("status"));
-        
+          
         return order.toString();
     }
 
@@ -48,10 +48,11 @@ public class TransactionController {
      * It verifies the payment signature and updates the transaction status in the DB.
      */
     @PostMapping("/verify")
-    public ResponseEntity<String> verifyPayment(@RequestBody Map<String, String> payload) throws RazorpayException {
-        String razorpayOrderId = payload.get("razorpay_order_id");
-        String razorpayPaymentId = payload.get("razorpay_payment_id");
-        String razorpaySignature = payload.get("razorpay_signature");
+    public ResponseEntity<String> verifyPayment(@RequestBody Map<String, String> data) throws RazorpayException {
+    	System.out.print(data);
+        String razorpayOrderId = data.get("razorpay_order_id");
+        String razorpayPaymentId = data.get("razorpay_payment_id");
+        String razorpaySignature = data.get("razorpay_signature");
 
         String resultMessage = transactionService.verifyAndUpdateTransaction(razorpayOrderId, razorpayPaymentId, razorpaySignature);
         

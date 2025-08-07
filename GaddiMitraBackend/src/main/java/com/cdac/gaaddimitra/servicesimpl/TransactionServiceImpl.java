@@ -6,14 +6,23 @@ import com.cdac.gaaddimitra.repository.*;
 import com.cdac.gaaddimitra.services.TransactionService;
 import com.razorpay.RazorpayException;
 import com.razorpay.Utils;
+
+import org.apache.commons.codec.binary.Hex;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
 
 @Service
 public class TransactionServiceImpl implements TransactionService {
@@ -24,8 +33,6 @@ public class TransactionServiceImpl implements TransactionService {
 	private CustomerRepo customerRepo;
 	@Autowired
 	private VeichleRequestRepo veichleRequestRepo;
-	@Autowired
-	private VeichleRepo veichleRepo;
 
 	// --> ADD THIS: Inject the secret key for verification
 	@Value("${razorpay.key.secret}")
@@ -39,13 +46,11 @@ public class TransactionServiceImpl implements TransactionService {
 				.orElseThrow(() -> new RuntimeException("Customer not found"));
 		VeichleRequest request = veichleRequestRepo.findById(tDto.getRequestId())
 				.orElseThrow(() -> new RuntimeException("Request not found"));
-		Veichles vehicle = veichleRepo.findById(tDto.getVeichleId())
-				.orElseThrow(() -> new RuntimeException("Vehicle not found"));
+
 
 		Transaction transaction = new Transaction();
 		transaction.setCustomer(customer);
 		transaction.setRequest(request);
-		transaction.setVeichle(vehicle);
 		transaction.setReceiverType(tDto.getReceiverType());
 		transaction.setReceiverId(tDto.getReceiverId());
 		transaction.setTransactionType(tDto.getTransactionType());
@@ -66,23 +71,37 @@ public class TransactionServiceImpl implements TransactionService {
 			throws RazorpayException {
 		Transaction transaction = transactionRepo.findByRazorpayOrderId(razorpayOrderId)
 				.orElseThrow(() -> new RuntimeException("Transaction not found for order id: " + razorpayOrderId));
-
+		
 		JSONObject options = new JSONObject();
 		options.put("razorpay_order_id", razorpayOrderId);
 		options.put("razorpay_payment_id", razorpayPaymentId);
 		options.put("razorpay_signature", razorpaySignature);
 
-		boolean isValid = Utils.verifyPaymentSignature(options, this.razorpayKeySecret);
-
-		if (isValid) {
-			transaction.setStatus("PAID");
-			transactionRepo.save(transaction);
-			return "Payment verified successfully and status updated.";
-		} else {
-			transaction.setStatus("FAILED");
-			transactionRepo.save(transaction);
-			return "Payment verification failed.";
+		String payload = razorpayOrderId + "|" + razorpayPaymentId;
+		try {
+			String generatedSignature = hmacSHA256(payload,razorpayKeySecret);
+			  if (generatedSignature.equals(razorpaySignature)) {
+				  transaction.setStatus("PAID");
+					transactionRepo.save(transaction);
+		            return"Signature is valid";
+		        } else {
+		        	transaction.setStatus("FAILED");
+					transactionRepo.save(transaction);
+		            return "Invalid signature";
+		        }
+		} catch (InvalidKeyException | NoSuchAlgorithmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+		return "Invalid signature";
+	}
+
+	private String hmacSHA256(String payload, String razorpayKeySecret2) throws NoSuchAlgorithmException, InvalidKeyException {
+		Mac sha256_HMAC = Mac.getInstance(razorpayKeySecret2);
+		  SecretKeySpec secret_key = new SecretKeySpec(razorpayKeySecret2.getBytes(), "HmacSHA256");
+		  sha256_HMAC.init(secret_key);
+		    byte[] hash = sha256_HMAC.doFinal(payload.getBytes());
+		    return Hex.encodeHexString(hash);
 	}
 
 	@Override
@@ -132,10 +151,7 @@ public class TransactionServiceImpl implements TransactionService {
             // Assuming VeichleRequest entity has a getRequestid() method
             dto.setRequestId(transaction.getRequest().getRequestid());
         }
-        if (transaction.getVeichle() != null) {
-            // Assuming Veichles entity has an getId() method
-            dto.setVeichleId(transaction.getVeichle().getId());
-        }
+      
         return dto;
     }
 
@@ -149,14 +165,12 @@ public class TransactionServiceImpl implements TransactionService {
                 .orElseThrow(() -> new RuntimeException("Customer not found with id: " + dto.getCustomerId()));
         VeichleRequest request = veichleRequestRepo.findById(dto.getRequestId())
                 .orElseThrow(() -> new RuntimeException("Vehicle Request not found with id: " + dto.getRequestId()));
-        Veichles vehicle = veichleRepo.findById(dto.getVeichleId())
-                .orElseThrow(() -> new RuntimeException("Vehicle not found with id: " + dto.getVeichleId()));
 
         // Create and populate the entity
         Transaction transaction = new Transaction();
         transaction.setCustomer(customer);
         transaction.setRequest(request);
-        transaction.setVeichle(vehicle);
+//        transaction.setVeichle(vehicle);
         transaction.setReceiverType(dto.getReceiverType());
         transaction.setReceiverId(dto.getReceiverId());
         transaction.setTransactionType(dto.getTransactionType());
@@ -164,11 +178,6 @@ public class TransactionServiceImpl implements TransactionService {
         transaction.setStatus(dto.getStatus());
         transaction.setDateTime(dto.getDateTime() != null ? dto.getDateTime() : LocalDateTime.now());
 
-        // Note: razorpayOrderId is usually set during the createInitialTransaction flow, 
-        // not typically in a generic addTransaction method unless it's a manual entry.
-        // If your DTO includes it, you should set it:
-        // transaction.setRazorpayOrderId(dto.getRazorpayOrderId()); 
-        
         return transaction;
     }
 }

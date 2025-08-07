@@ -30,6 +30,7 @@ import ContactSupport from "./pages/ContactSupport.jsx";
 import Profile from "./pages/Profile.jsx";
 import QuotationDetails from "./pages/QuotationDetails.jsx";
 import PaymentPage from "./pages/PaymentPage.jsx";
+import ServiceCenterDetail from "./pages/ServiceCenterDetail.jsx";
 
 function Router() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -50,6 +51,7 @@ function Router() {
             <Route path="/servicecenters" element={<ServiceCenters />} />
             <Route path="/dashboard/quotation/detail" element={<QuotationDetails/>}/>
             <Route path="/dashboard/quotation/details/payment" element={<PaymentPage/>}></Route>
+                <Route path="/servicenter/details" element={<ServiceCenterDetail/>}></Route>
             
                  <Route
               path="/dashboard/request/service"
@@ -79,6 +81,7 @@ function Router() {
               element={<ServiceVehicleForm />}
             />
                 <Route path="/dashboard/quotation/details/payment" element={<PaymentPage/>}></Route>
+                <Route path="/servicenter/details" element={<ServiceCenterDetail/>}></Route>
 
             <Route path="/about" element={<AboutUs />} />
             <Route path="/cars/details" element={<VehicleDetails />} />
