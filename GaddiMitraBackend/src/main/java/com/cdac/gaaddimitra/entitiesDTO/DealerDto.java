@@ -1,24 +1,14 @@
 //package com.cdac.gaaddimitra.entitiesDTO;
 //
+//import lombok.*;
 //import org.springframework.stereotype.Component;
 //
 //@Component
-//public class DealerDto extends UserDto{
-//	
-//
-//	public DealerDto() {
-//		super();
-//	}
-//	
-//	public DealerDto(int id, String name, String email,String password, String phone, String address,String role) {
-//		super(id,name,email,password,phone,address,role);
-//		
-//	}
-//
-//	@Override
-//	public String toString() {
-//		return  "DealerDto []";
-//	}
-//
-//	
+//@Data
+//@EqualsAndHashCode(callSuper = true)
+//@ToString(callSuper = true)
+//@NoArgsConstructor
+//@AllArgsConstructor
+//public class DealerDto extends UserDto {
+//    // Add dealer-specific fields here if needed
 //}

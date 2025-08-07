@@ -132,10 +132,4 @@ public class Notification {
 				+ customerid + ", recievertype=" + recievertype +", message="
 				+ message + ", datetime=" + datetime + ", status=" + status + ", request=" + request + "]";
 	}
-	
-	
-	
-	
-	
-	
 }
