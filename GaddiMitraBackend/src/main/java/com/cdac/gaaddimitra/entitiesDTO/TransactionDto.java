@@ -13,7 +13,7 @@ public class TransactionDto {
 	private int receiverId;
 	private int veichleId;
 	private String transactionType;
-	private int ammount;
+	private int amount;
 	private String status;
 	private LocalDateTime dateTime;
 	
@@ -22,7 +22,7 @@ public class TransactionDto {
 	}
 	
 	public TransactionDto(int transactionId, int customerId, int requestId, String receiverType, int receiverId,
-			int veichleId, String transactionType, int ammount, String status, LocalDateTime dateTime) {
+			int veichleId, String transactionType, int amount, String status, LocalDateTime dateTime) {
 		super();
 		this.transactionId = transactionId;
 		this.customerId = customerId;
@@ -31,7 +31,7 @@ public class TransactionDto {
 		this.receiverId = receiverId;
 		this.veichleId = veichleId;
 		this.transactionType = transactionType;
-		this.ammount = ammount;
+		this.amount = amount;
 		this.status = status;
 		this.dateTime = dateTime;
 	}
@@ -92,12 +92,12 @@ public class TransactionDto {
 		this.transactionType = transactionType;
 	}
 
-	public int getAmmount() {
-		return ammount;
+	public int getAmount() {
+		return amount;
 	}
 
-	public void setAmmount(int ammount) {
-		this.ammount = ammount;
+	public void setAmount(int amount) {
+		this.amount = amount;
 	}
 
 	public String getStatus() {
@@ -120,7 +120,7 @@ public class TransactionDto {
 	public String toString() {
 		return "TransactionDto [transactionId=" + transactionId + ", customerId=" + customerId + ", requestId="
 				+ requestId + ", receiverType=" + receiverType + ", receiverId=" + receiverId + ", veichleId="
-				+ veichleId + ", transactionType=" + transactionType + ", ammount=" + ammount + ", status=" + status
+				+ veichleId + ", transactionType=" + transactionType + ", amount=" + amount + ", status=" + status
 				+ ", dateTime=" + dateTime + "]";
 	}
 					

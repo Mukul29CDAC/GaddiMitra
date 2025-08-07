@@ -21,11 +21,11 @@ public class Transaction {
 	private int transactionid;
 
 	@ManyToOne
-	@JoinColumn(name = "customerid", nullable = false) // Foreign key column in transaction table
+	@JoinColumn(name = "customerid", nullable = false)
 	private Customer customer;
 
 	@ManyToOne
-	@JoinColumn(name = "requestid", nullable = false) // Foreign key column in transaction table
+	@JoinColumn(name = "requestid", nullable = false)
 	private VeichleRequest request;
 
 	@Column(name = "receivertype")
@@ -35,14 +35,14 @@ public class Transaction {
 	private int receiverId;
 
 	@ManyToOne
-	@JoinColumn(name = "veichleid", nullable = false) // Foreign key column in transaction table
+	@JoinColumn(name = "veichleid", nullable = false)
 	private Veichles veichle;
 
 	@Column(name = "transactiontype")
 	private String transactionType;
 
-	@Column(name = "ammount")
-	private int ammount;
+	@Column(name = "amount")
+	private int amount;
 
 	@Column(name = "status")
 	private String status;
@@ -50,12 +50,16 @@ public class Transaction {
 	@Column(name = "datetime")
 	private LocalDateTime dateTime;
 
+	// --- NEW FIELD ---
+	@Column(name = "razorpay_order_id")
+	private String razorpayOrderId;
+
 	public Transaction() {
 		super();
 	}
 
 	public Transaction(int transactionid, Customer customer, VeichleRequest request, String receiverType,
-			int receiverId, Veichles veichle, String transactionType, int ammount, String status,
+			int receiverId, Veichles veichle, String transactionType, int amount, String status,
 			LocalDateTime dateTime) {
 		this.transactionid = transactionid;
 		this.customer = customer;
@@ -64,7 +68,7 @@ public class Transaction {
 		this.receiverId = receiverId;
 		this.veichle = veichle;
 		this.transactionType = transactionType;
-		this.ammount = ammount;
+		this.amount = amount;
 		this.status = status;
 		this.dateTime = dateTime;
 	}
@@ -125,12 +129,12 @@ public class Transaction {
 		this.transactionType = transactionType;
 	}
 
-	public int getAmmount() {
-		return ammount;
+	public int getAmount() {
+		return amount;
 	}
 
-	public void setAmmount(int ammount) {
-		this.ammount = ammount;
+	public void setAmount(int amount) {
+		this.amount = amount;
 	}
 
 	public String getStatus() {
@@ -149,13 +153,20 @@ public class Transaction {
 		this.dateTime = dateTime;
 	}
 
+	public String getRazorpayOrderId() {
+		return razorpayOrderId;
+	}
+
+	public void setRazorpayOrderId(String razorpayOrderId) {
+		this.razorpayOrderId = razorpayOrderId;
+	}
+
 	@Override
 	public String toString() {
 		return "Transaction{" + "transactionid=" + transactionid + ", customer=" + customer + ", request=" + request
 				+ ", receiverType='" + receiverType + '\'' + ", receiverId=" + receiverId + ", veichle=" + veichle
-				+ ", transactionType='" + transactionType + '\'' + ", ammount=" + ammount + ", status='" + status + '\''
+				+ ", transactionType='" + transactionType + '\'' + ", amount=" + amount + ", status='" + status + '\''
 				+ ", dateTime=" + dateTime + '}';
 	}
 
-	
 }

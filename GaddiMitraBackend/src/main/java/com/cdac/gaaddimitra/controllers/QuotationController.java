@@ -46,5 +46,5 @@ public class QuotationController {
 	public List<QuotationDto> getQuotationsForCustomer(@PathVariable int id,@PathVariable String role){
 		return serviceQuot.allQuotationsForCustomer(id,role);
 	}
-	
+
 }
