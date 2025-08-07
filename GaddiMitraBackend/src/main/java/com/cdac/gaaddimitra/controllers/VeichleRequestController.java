@@ -7,8 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
@@ -30,7 +32,7 @@ public class VeichleRequestController {
 
     @GetMapping("/requests/showallrequests/{id}")
     public ResponseEntity<List<VeichleRequestDto>> allRequest(@PathVariable int id) {
-        System.out.println("Controller: Fetching all requests for customer ID: " + id);
+       
         List<VeichleRequestDto> requests = service.allRequests(id);
         if (requests.isEmpty()) {
             return ResponseEntity.noContent().build();
@@ -60,5 +62,11 @@ public class VeichleRequestController {
 			return ResponseEntity.noContent().build();
 		}
 		return ResponseEntity.ok(veichleRequests);
+	}
+	
+	
+	@PatchMapping("/veichleRequest/update")
+	public String updateRequest() {
+		return null;
 	}
 }

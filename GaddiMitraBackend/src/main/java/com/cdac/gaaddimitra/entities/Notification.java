@@ -32,15 +32,6 @@ public class Notification {
 	@Column(name="recievertype")
 	private String recievertype;
 	
-	@Column(name="veichletype")
-	private String veichletype;
-	
-	@Column(name="brand")
-	private String brand;
-	
-	@Column(name="model")
-	private String model;
-	
 	@Column(name="message")
 	private String message;
 	
@@ -58,86 +49,17 @@ public class Notification {
 		super();
 	}
 
-
-
-	public Notification(int notificationid, int requestid, int customerid, String recievertype, String veichletype,
-			String brand, String model, String message, LocalDateTime datetime, NotificationStatus status,
-			VeichleRequest request) {
+	public Notification(int requestid, int customerid, String recievertype, 
+			String message, LocalDateTime datetime, NotificationStatus status) {
 		super();
-		this.notificationid = notificationid;
 		this.requestid = requestid;
 		this.customerid = customerid;
 		this.recievertype = recievertype;
-		this.veichletype = veichletype;
-		this.brand = brand;
-		this.model = model;
 		this.message = message;
 		this.datetime = datetime;
 		this.status = status;
-		this.request = request;
 	}
 
-
-
-	public int getCustomerid() {
-		return customerid;
-	}
-
-
-	public void setCustomerid(int customerid) {
-		this.customerid = customerid;
-	}
-
-
-
-
-
-
-
-
-
-	public NotificationStatus getStatus() {
-		return status;
-	}
-
-
-	public void setStatus(NotificationStatus status) {
-		this.status = status;
-	}
-
-
-	public String getModel() {
-		return model;
-	}
-
-	public void setModel(String model) {
-		this.model = model;
-	}
-
-	public String getVeichletype() {
-		return veichletype;
-	}
-
-	public void setVeichletype(String veichletype) {
-		this.veichletype = veichletype;
-	}
-
-	public String getBrand() {
-		return brand;
-	}
-
-	public void setBrand(String brand) {
-		this.brand = brand;
-	}
-
-
-	public VeichleRequest getRequest() {
-		return request;
-	}
-
-	public void setRequest(VeichleRequest request) {
-		this.request = request;
-	}
 	public int getNotificationid() {
 		return notificationid;
 	}
@@ -154,6 +76,14 @@ public class Notification {
 		this.requestid = requestid;
 	}
 
+	public int getCustomerid() {
+		return customerid;
+	}
+
+	public void setCustomerid(int customerid) {
+		this.customerid = customerid;
+	}
+
 	public String getRecievertype() {
 		return recievertype;
 	}
@@ -161,6 +91,8 @@ public class Notification {
 	public void setRecievertype(String recievertype) {
 		this.recievertype = recievertype;
 	}
+
+
 
 	public String getMessage() {
 		return message;
@@ -178,20 +110,29 @@ public class Notification {
 		this.datetime = datetime;
 	}
 
+	public NotificationStatus getStatus() {
+		return status;
+	}
 
+	public void setStatus(NotificationStatus status) {
+		this.status = status;
+	}
+
+	public VeichleRequest getRequest() {
+		return request;
+	}
+
+	public void setRequest(VeichleRequest request) {
+		this.request = request;
+	}
 
 	@Override
 	public String toString() {
 		return "Notification [notificationid=" + notificationid + ", requestid=" + requestid + ", customerid="
-				+ customerid + ", recievertype=" + recievertype + ", veichletype=" + veichletype + ", brand=" + brand
-				+ ", model=" + model + ", message=" + message + ", datetime=" + datetime + ", status=" + status
-				+ ", request=" + request + "]";
+				+ customerid + ", recievertype=" + recievertype +", message="
+				+ message + ", datetime=" + datetime + ", status=" + status + ", request=" + request + "]";
 	}
-
-
-
 	
-
 	
 	
 	
