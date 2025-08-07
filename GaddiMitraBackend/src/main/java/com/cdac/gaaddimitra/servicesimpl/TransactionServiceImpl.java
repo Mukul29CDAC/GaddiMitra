@@ -1,61 +1,48 @@
 package com.cdac.gaaddimitra.servicesimpl;
 
+import com.cdac.gaaddimitra.entities.*;
+import com.cdac.gaaddimitra.entitiesDTO.TransactionDto;
+import com.cdac.gaaddimitra.repository.*;
+import com.cdac.gaaddimitra.services.TransactionService;
+import com.razorpay.RazorpayException;
+import com.razorpay.Utils;
+import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import com.cdac.gaaddimitra.entities.Customer;
-import com.cdac.gaaddimitra.entities.Transaction;
-import com.cdac.gaaddimitra.entities.VeichleRequest;
-import com.cdac.gaaddimitra.entities.Veichles;
-import com.cdac.gaaddimitra.entitiesDTO.TransactionDto;
-import com.cdac.gaaddimitra.repository.CustomerRepo; // You need to create this repository
-import com.cdac.gaaddimitra.repository.TransactionRepo;
-import com.cdac.gaaddimitra.repository.VeichleRepo; // You need to create this repository
-import com.cdac.gaaddimitra.repository.VeichleRequestRepo; // You need to create this repository
-import com.cdac.gaaddimitra.services.TransactionService;
 
 @Service
 public class TransactionServiceImpl implements TransactionService {
 
 	@Autowired
 	private TransactionRepo transactionRepo;
-
-	// Inject other repositories needed to fetch related entities by their IDs
 	@Autowired
 	private CustomerRepo customerRepo;
-
 	@Autowired
 	private VeichleRequestRepo veichleRequestRepo;
-
 	@Autowired
 	private VeichleRepo veichleRepo;
 
-	/**
-	 * Creates and saves an initial transaction record for a Razorpay payment attempt.
-	 * It fetches related entities using IDs from the DTO, sets the Razorpay Order ID,
-	 * and saves the complete Transaction object with a "created" status.
-	 */
-	@Override
-	public void createInitialTransaction(TransactionDto tDto, String razorpayOrderId, String status) {
-		// 1. Fetch related entities from the database
-		Customer customer = customerRepo.findById(tDto.getCustomerId())
-				.orElseThrow(() -> new RuntimeException("Customer not found with id: " + tDto.getCustomerId()));
-		
-		VeichleRequest request = veichleRequestRepo.findById(tDto.getRequestId())
-				.orElseThrow(() -> new RuntimeException("Vehicle Request not found with id: " + tDto.getRequestId()));
-		
-		Veichles vehicle = veichleRepo.findById(tDto.getVeichleId())
-				.orElseThrow(() -> new RuntimeException("Vehicle not found with id: " + tDto.getVeichleId()));
+	// --> ADD THIS: Inject the secret key for verification
+	@Value("${razorpay.key.secret}")
+	private String razorpayKeySecret;
 
-		// 2. Create a new Transaction ENTITY object
+	@Override
+	@Transactional
+	public void createInitialTransaction(TransactionDto tDto, String razorpayOrderId, String status) {
+		// ... (This method is correct as you wrote it)
+		Customer customer = customerRepo.findById(tDto.getCustomerId())
+				.orElseThrow(() -> new RuntimeException("Customer not found"));
+		VeichleRequest request = veichleRequestRepo.findById(tDto.getRequestId())
+				.orElseThrow(() -> new RuntimeException("Request not found"));
+		Veichles vehicle = veichleRepo.findById(tDto.getVeichleId())
+				.orElseThrow(() -> new RuntimeException("Vehicle not found"));
+
 		Transaction transaction = new Transaction();
-		
-		// 3. Manually set the properties on the entity
 		transaction.setCustomer(customer);
 		transaction.setRequest(request);
 		transaction.setVeichle(vehicle);
@@ -63,120 +50,125 @@ public class TransactionServiceImpl implements TransactionService {
 		transaction.setReceiverId(tDto.getReceiverId());
 		transaction.setTransactionType(tDto.getTransactionType());
 		transaction.setAmount(tDto.getAmount());
-		
-		// 4. Set details specific to this payment attempt
-		transaction.setStatus(status); // e.g., "created"
+		transaction.setStatus(status);
 		transaction.setDateTime(LocalDateTime.now());
-		transaction.setRazorpayOrderId(razorpayOrderId); // Set the Razorpay order ID
-		
-		// 5. Save the fully constructed transaction record
+		transaction.setRazorpayOrderId(razorpayOrderId);
+
 		transactionRepo.save(transaction);
-		
-		System.out.println("Initial transaction saved to DB with Razorpay Order ID: " + razorpayOrderId);
 	}
 
 	/**
-	 * Retrieves all transactions and maps them to a list of TransactionDto objects.
+	 * CRITICAL: Implementation of the verification logic.
 	 */
+	@Override
+	@Transactional
+	public String verifyAndUpdateTransaction(String razorpayOrderId, String razorpayPaymentId, String razorpaySignature)
+			throws RazorpayException {
+		Transaction transaction = transactionRepo.findByRazorpayOrderId(razorpayOrderId)
+				.orElseThrow(() -> new RuntimeException("Transaction not found for order id: " + razorpayOrderId));
+
+		JSONObject options = new JSONObject();
+		options.put("razorpay_order_id", razorpayOrderId);
+		options.put("razorpay_payment_id", razorpayPaymentId);
+		options.put("razorpay_signature", razorpaySignature);
+
+		boolean isValid = Utils.verifyPaymentSignature(options, this.razorpayKeySecret);
+
+		if (isValid) {
+			transaction.setStatus("PAID");
+			transactionRepo.save(transaction);
+			return "Payment verified successfully and status updated.";
+		} else {
+			transaction.setStatus("FAILED");
+			transactionRepo.save(transaction);
+			return "Payment verification failed.";
+		}
+	}
+
 	@Override
 	public List<TransactionDto> getAllTransactions() {
 		List<Transaction> transactions = transactionRepo.findAll();
 		if (transactions.isEmpty()) {
 			throw new RuntimeException("No transactions found");
 		}
-		// Use a stream to map each Transaction entity to a TransactionDto
-		return transactions.stream()
-				.map(this::mapEntityToDto)
-				.collect(Collectors.toList());
+		return transactions.stream().map(this::mapEntityToDto).collect(Collectors.toList());
 	}
-	
-	/**
-	 * Adds a new transaction. This method assumes the DTO contains all necessary IDs
-	 * to build the complete Transaction entity.
-	 */
+
 	@Override
 	public void addTransaction(TransactionDto transactionDto) {
-		// Since the DTO has IDs and the Entity needs objects, we must manually map them.
 		Transaction transaction = mapDtoToEntity(transactionDto);
 		transactionRepo.save(transaction);
 	}
-	
-	/**
-	 * Retrieves a single transaction by its ID and maps it to a TransactionDto.
-	 */
+
 	@Override
 	public TransactionDto getTransactionById(int id) {
 		Transaction transaction = transactionRepo.findById(id)
 				.orElseThrow(() -> new RuntimeException("Transaction not found with id: " + id));
-		// Map the found entity to a DTO before returning
 		return mapEntityToDto(transaction);
 	}
-	
-	/**
-	 * Returns the total count of transactions in the database.
-	 */
+
 	@Override
 	public long totalTransactions() {
 		return transactionRepo.count();
 	}
 
-	// =================================================================================
-	// HELPER METHODS FOR MAPPING BETWEEN ENTITY AND DTO
-	// =================================================================================
-
-	/**
-	 * Helper method to map a Transaction entity to a TransactionDto.
-	 * This is needed because the entity holds full objects, but the DTO needs primitive IDs.
-	 */
+	// map entity to dto helper method
 	private TransactionDto mapEntityToDto(Transaction transaction) {
-		
-		TransactionDto dto = new TransactionDto();
-		dto.setTransactionId(transaction.getTransactionid());
-		dto.setReceiverType(transaction.getReceiverType());
-		dto.setReceiverId(transaction.getReceiverId());
-		dto.setTransactionType(transaction.getTransactionType());
-		dto.setAmount(transaction.getAmount());
-		dto.setStatus(transaction.getStatus());
-		dto.setDateTime(transaction.getDateTime());
+        TransactionDto dto = new TransactionDto();
+        dto.setTransactionId(transaction.getTransactionid());
+        dto.setReceiverType(transaction.getReceiverType());
+        dto.setReceiverId(transaction.getReceiverId());
+        dto.setTransactionType(transaction.getTransactionType());
+        dto.setAmount(transaction.getAmount());
+        dto.setStatus(transaction.getStatus());
+        dto.setDateTime(transaction.getDateTime());
 
-		// Extract IDs from the related objects
-		if (transaction.getCustomer() != null) {
-			dto.setCustomerId(transaction.getCustomer().getUserid());
-		}
-		if (transaction.getRequest() != null) {
-			dto.setRequestId(transaction.getRequest().getRequestid());
-		}
-		if (transaction.getVeichle() != null) {
-			dto.setVeichleId(transaction.getVeichle().getId());
-		}
-		return dto;
-	}
+        // Extract IDs from the related objects
+        if (transaction.getCustomer() != null) {
+            // Assuming Customer entity has a getUserid() method
+            dto.setCustomerId(transaction.getCustomer().getUserid());
+        }
+        if (transaction.getRequest() != null) {
+            // Assuming VeichleRequest entity has a getRequestid() method
+            dto.setRequestId(transaction.getRequest().getRequestid());
+        }
+        if (transaction.getVeichle() != null) {
+            // Assuming Veichles entity has an getId() method
+            dto.setVeichleId(transaction.getVeichle().getId());
+        }
+        return dto;
+    }
 
-	/**
-	 * Helper method to map a TransactionDto to a new Transaction entity.
-	 * It fetches related objects from the database using the IDs in the DTO.
-	 */
-	private Transaction mapDtoToEntity(TransactionDto dto) {
-		// Fetch related entities
-		Customer customer = customerRepo.findById(dto.getCustomerId())
-				.orElseThrow(() -> new RuntimeException("Customer not found with id: " + dto.getCustomerId()));
-		VeichleRequest request = veichleRequestRepo.findById(dto.getRequestId())
-				.orElseThrow(() -> new RuntimeException("Vehicle Request not found with id: " + dto.getRequestId()));
-		Veichles vehicle = veichleRepo.findById(dto.getVeichleId())
-				.orElseThrow(() -> new RuntimeException("Vehicle not found with id: " + dto.getVeichleId()));
+    /**
+     * Maps a TransactionDto to a new Transaction entity.
+     * It fetches related objects from the database using the IDs in the DTO.
+     */
+    private Transaction mapDtoToEntity(TransactionDto dto) {
+        // Fetch related entities from the DB
+        Customer customer = customerRepo.findById(dto.getCustomerId())
+                .orElseThrow(() -> new RuntimeException("Customer not found with id: " + dto.getCustomerId()));
+        VeichleRequest request = veichleRequestRepo.findById(dto.getRequestId())
+                .orElseThrow(() -> new RuntimeException("Vehicle Request not found with id: " + dto.getRequestId()));
+        Veichles vehicle = veichleRepo.findById(dto.getVeichleId())
+                .orElseThrow(() -> new RuntimeException("Vehicle not found with id: " + dto.getVeichleId()));
 
-		// Create and populate the entity
-		Transaction transaction = new Transaction();
-		transaction.setCustomer(customer);
-		transaction.setRequest(request);
-		transaction.setVeichle(vehicle);
-		transaction.setReceiverType(dto.getReceiverType());
-		transaction.setReceiverId(dto.getReceiverId());
-		transaction.setTransactionType(dto.getTransactionType());
-		transaction.setAmount(dto.getAmount());
-		transaction.setStatus(dto.getStatus());
-		transaction.setDateTime(dto.getDateTime() != null ? dto.getDateTime() : LocalDateTime.now());
+        // Create and populate the entity
+        Transaction transaction = new Transaction();
+        transaction.setCustomer(customer);
+        transaction.setRequest(request);
+        transaction.setVeichle(vehicle);
+        transaction.setReceiverType(dto.getReceiverType());
+        transaction.setReceiverId(dto.getReceiverId());
+        transaction.setTransactionType(dto.getTransactionType());
+        transaction.setAmount(dto.getAmount());
+        transaction.setStatus(dto.getStatus());
+        transaction.setDateTime(dto.getDateTime() != null ? dto.getDateTime() : LocalDateTime.now());
 
-		return transaction;
-	}
+        // Note: razorpayOrderId is usually set during the createInitialTransaction flow, 
+        // not typically in a generic addTransaction method unless it's a manual entry.
+        // If your DTO includes it, you should set it:
+        // transaction.setRazorpayOrderId(dto.getRazorpayOrderId()); 
+        
+        return transaction;
+    }
 }

@@ -1,64 +1,64 @@
 package com.cdac.gaaddimitra.controllers;
 
-import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.cdac.gaaddimitra.entitiesDTO.TransactionDto;
-import com.cdac.gaaddimitra.servicesimpl.TransactionServiceImpl;
+import com.cdac.gaaddimitra.services.TransactionService; // --> FIX: Autowire the interface, not the implementation
 import com.razorpay.Order;
 import com.razorpay.RazorpayClient;
 import com.razorpay.RazorpayException;
+import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import java.util.Map;
 
-@CrossOrigin(origins = "*") // For production, consider being more specific, e.g., "http://your-frontend-domain.com"
+@CrossOrigin(origins = "*")
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/transaction") 
 public class TransactionController {
 
     @Autowired
-    private TransactionServiceImpl transactionService;
+    private TransactionService transactionService; 
 
-    // Use the injected values from application.properties
-    @Value("${razorpay.key.id}")
-    private String razorpayKeyId;
+    @Autowired
+    private RazorpayClient razorpayClient; 
 
-    @Value("${razorpay.key.secret}")
-    private String razorpayKeySecret;
-
-    @PostMapping("/transaction/createTransaction") // Renamed for correctness
-    public String createTransaction(@RequestBody TransactionDto tDto) throws RazorpayException {
+    /**
+     * Endpoint to create a Razorpay order and save the initial transaction record.
+     */
+    @PostMapping("/create")
+    public String createTransactionOrder(@RequestBody TransactionDto tDto) throws RazorpayException {
         
-        // 1. Get the amount from the incoming DTO
-        int amount = tDto.getAmount(); // Using the corrected getter
-
-        // 2. Create a Razorpay client (using the secure keys from properties)
-        RazorpayClient razorpayClient = new RazorpayClient(razorpayKeyId, razorpayKeySecret);
-
-        // 3. Prepare the order options
         JSONObject options = new JSONObject();
-        options.put("amount", amount * 100); // Amount in the smallest currency unit (paise)
+        options.put("amount", tDto.getAmount() * 100);
         options.put("currency", "INR");
-        options.put("receipt", "receipt_for_request_" + tDto.getRequestId()); // Create a meaningful receipt ID
+        options.put("receipt", "txn_receipt_" + tDto.getRequestId());
 
-        // 4. Create the Razorpay order
-        Order order = razorpayClient.Orders.create(options);
+        // --> FIX: Use lowercase 'orders' and the injected client check if Orders is required
+        Order order = this.razorpayClient.Orders.create(options);
         
-        // This is the Razorpay Order ID
         String razorpayOrderId = order.get("id");
-        System.out.println("Created Razorpay Order ID: " + razorpayOrderId);
-
-        // 5. **IMPORTANT: Save the transaction details to your database**
-        // We pass the incoming DTO and the newly created razorpayOrderId to the service.
+        
         transactionService.createInitialTransaction(tDto, razorpayOrderId, order.get("status"));
         
-        // 6. Return the order details to the frontend
         return order.toString();
     }
-    
-    // You will need a verification endpoint here later!
+
+    /**
+     * CRITICAL: Endpoint for the frontend to call after a payment is made.
+     * It verifies the payment signature and updates the transaction status in the DB.
+     */
+    @PostMapping("/verify")
+    public ResponseEntity<String> verifyPayment(@RequestBody Map<String, String> payload) throws RazorpayException {
+        String razorpayOrderId = payload.get("razorpay_order_id");
+        String razorpayPaymentId = payload.get("razorpay_payment_id");
+        String razorpaySignature = payload.get("razorpay_signature");
+
+        String resultMessage = transactionService.verifyAndUpdateTransaction(razorpayOrderId, razorpayPaymentId, razorpaySignature);
+        
+        if (resultMessage.contains("successfully")) {
+            return ResponseEntity.ok(resultMessage);
+        } else {
+            return ResponseEntity.status(400).body(resultMessage);
+        }
+    }
 }
