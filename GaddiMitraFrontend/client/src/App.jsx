@@ -33,31 +33,17 @@ import PaymentPage from "./pages/PaymentPage.jsx";
 import ServiceCenterDetail from "./pages/ServiceCenterDetail.jsx";
 
 function Router() {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading ,token} = useAuth();
 
   return (
     <BrowserRouter>
       <Routes>
-        {!isAuthenticated ? (
+        {token === null ? (
           <>
             <Route path="/" element={<Landing />} />
             <Route path="/cars" element={<Cars />} />
             <Route path="*" element={<NotFound />} />
-            {/* <Route path="/home" element={<Home />} /> */}
-          {/* <Route path="/dashboard" element={<Dashboard />} /> */}
-            <Route path="/dashboard/transactions" element={<TransactionHistory />} />
-            <Route path="/contact" element={<ContactSupport />} />
-            {/* <Route path="/profile" element={<Profile />} /> */}
-            <Route path="/servicecenters" element={<ServiceCenters />} />
-            <Route path="/dashboard/quotation/detail" element={<QuotationDetails/>}/>
-            <Route path="/dashboard/quotation/details/payment" element={<PaymentPage/>}></Route>
-                <Route path="/servicenter/details" element={<ServiceCenterDetail/>}></Route>
-            
-                 <Route
-              path="/dashboard/request/service"
-              element={<ServiceVehicleForm />}
-            />
-          </>
+                    </>
         ) : (
           <>
             <Route path="/" element={<Landing />} />

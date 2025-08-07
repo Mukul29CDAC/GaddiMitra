@@ -10,7 +10,7 @@ export default function SendQuotationForm() {
   const navigate = useNavigate();
   const request = location.state;
 
-  const {user} = useAuth();
+  const {user,token} = useAuth();
 
   const [quotation, setQuotation] = useState({
     requestid: request?.requestid || "",
@@ -30,7 +30,12 @@ export default function SendQuotationForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("http://localhost:8080/quotation/addQuotation", quotation);
+      const response = await axios.post("http://localhost:8080/quotation/addQuotation", quotation,
+        {
+        headers: {
+          "Authorization": `Bearer ${token}` 
+        }
+        },);
       alert("Quotation submitted successfully!");
       navigate("/dashboard");
     } catch (error) {

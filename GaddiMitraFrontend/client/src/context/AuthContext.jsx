@@ -1,28 +1,37 @@
 // src/context/AuthContext.js
-import { createContext, useContext, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { createContext, useContext, useState, useEffect } from "react";
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  // const navigate = useNavigate();
+  const [token, setToken] = useState(null); // Initialize as null instead of reading from localStorage
 
+  useEffect(() => {
+    // This effect runs once when the component mounts
+    // Clear any existing token from localStorage
+    localStorage.removeItem("token");
+  }, []); // Empty dependency array means this runs only once on mount
+
+  // Save token and user on login
   const login = (userData) => {
     setUser(userData);
+    setToken(userData.token); // assumes userData includes token
+    localStorage.setItem("token", userData.token);
   };
 
+  // Clear token and user on logout
   const logout = () => {
     setUser(null);
-    // navigate("/"); // Redirect to home or login page after logout
+    setToken(null);
+    localStorage.removeItem("token");
     alert("Logged out successfully.");
-    
   };
 
-  const isAuthenticated = !!user;
+  const isAuthenticated = !!token;
 
   return (
-    <AuthContext.Provider value={{ user,login, isAuthenticated,logout}}>
+    <AuthContext.Provider value={{ token, user, login, logout, isAuthenticated }}>
       {children}
     </AuthContext.Provider>
   );

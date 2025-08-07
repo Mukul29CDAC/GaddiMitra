@@ -83,7 +83,7 @@ const handleNotificationsClick = () => {
             <div className="bg-orange-600 text-white px-3 py-1 rounded-lg font-bold">GAADDI</div>
             <span className="font-semibold text-xl">Mitra</span>
           </Link>
-
+          
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
             {navigation.map((item) => (

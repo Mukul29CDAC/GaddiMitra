@@ -26,7 +26,14 @@ const ServiceCenterForm = () => {
     try {
       const response = await fetch("http://localhost:8080/requests/addRequest", {
         method: "POST",
-        body: payload,
+        body: payload
+      }, 
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          // Corrected line: Provide the token as the value for the Authorization header
+          "Authorization": `Bearer ${token}` 
+        }
       });
       if (response.ok) {
         alert("Service request submitted successfully!");

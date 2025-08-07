@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.cdac.gaaddimitra.entitiesDTO.UserDto;
 import com.cdac.gaaddimitra.servicesimpl.DealerServiceImpl;
 
-@CrossOrigin(origins = "*")
 @RestController
 public class DealerController {
 	
