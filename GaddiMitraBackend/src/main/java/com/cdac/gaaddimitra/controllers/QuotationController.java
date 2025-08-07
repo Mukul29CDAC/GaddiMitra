@@ -42,6 +42,9 @@ public class QuotationController {
 		return serviceQuot.totalQuotation();
 	}
 	
-	
-	
+	@GetMapping("quotation/allQuotation/{id}/{role}")
+	public List<QuotationDto> getQuotationsForCustomer(@PathVariable int id,@PathVariable String role){
+		return serviceQuot.allQuotationsForCustomer(id,role);
+	}
+
 }

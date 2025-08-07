@@ -33,6 +33,7 @@ export default function Dashboard() {
 
   const [vehicles, setVehicles] = useState([]);
   const [requests, setRequests] = useState([]);
+  const [quotations, setQuotation] = useState([]);
 
   const profileCompletion = user
     ? (Object.values(user).filter((value) => value !== null && value !== "")
@@ -47,7 +48,10 @@ export default function Dashboard() {
           const customerRequest = await axios.get(
             `http://localhost:8080/requests/showallrequests/${user?.userid}`
           );
-          console.log("Fetched requests:", customerRequest.data);
+          const customerQuotation = await axios.get(
+            `http://localhost:8080/quotation/allQuotation/${user?.userid}/${user?.role}`
+          );
+          setQuotation(Array.isArray(customerQuotation.data) ? customerQuotation.data : []);
           setRequests(Array.isArray(customerRequest.data) ? customerRequest.data : []);
         } else {
           const response = await axios.get(
@@ -58,7 +62,10 @@ export default function Dashboard() {
             `http://localhost:8080/veichles/allVeichles/${user.userid}`
           );
 
-          console.log("Fetched requests:", response.data);
+            const customerQuotation = await axios.get(
+            `http://localhost:8080/quotation/allQuotation/${user?.userid}/${user?.role}`
+          );
+          setQuotation(Array.isArray(customerQuotation.data) ? customerQuotation.data : []);
           setRequests(Array.isArray(response.data) ? response.data : []);
           setVehicles(Array.isArray(vehiclesRes.data) ? vehiclesRes.data : []);
         }
@@ -199,7 +206,10 @@ export default function Dashboard() {
               <TabsTrigger value="vehicles">Vehicles</TabsTrigger>
             )}
             <TabsTrigger value="requests">Requests</TabsTrigger>
+            <TabsTrigger value="quotations">Quotations</TabsTrigger>
             <TabsTrigger value="transactions">Transactions</TabsTrigger>
+            
+
           </TabsList>
 
           <TabsContent value="overview">
@@ -413,6 +423,49 @@ export default function Dashboard() {
                   ) : (
                     <p className="text-gray-500 text-center py-4">
                       No requests available
+                    </p>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+           <TabsContent value="quotations">
+            <Card>
+              <CardHeader>
+                <CardTitle>Quotations</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="max-h-96 overflow-y-auto space-y-4 pr-1">
+                  {Array.isArray(quotations) && quotations.length > 0 ? (
+                    quotations.map((quotation) => (
+                      <div
+                        key={quotation.quotationid}
+                        className="p-4 border rounded-lg cursor-pointer hover:bg-gray-50"
+                        onClick={() =>
+                          navigate("/dashboard/quotation/detail", {
+                            state: quotation,
+                          })
+                        }
+                      >
+                        <div className="flex justify-between items-start mb-2">
+                          <h4 className="font-medium capitalize">
+                            FROM : {quotation.sendername} 
+                          </h4>
+                          <Badge variant="secondary">{quotation.requestid}</Badge>
+                        </div>
+                        <p className="text-gray-600 mb-2">{quotation.description}</p>
+                        <div className="flex justify-between items-center text-sm text-gray-500">
+                          <span>
+                            Created:{" "}
+                            {new Date(quotation.datetime).toLocaleDateString()}
+                          </span>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-gray-500 text-center py-4">
+                      No Quotation available
                     </p>
                   )}
                 </div>

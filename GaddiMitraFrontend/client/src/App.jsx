@@ -28,6 +28,8 @@ import NotifyPop from "./pages/Notification.jsx";
 import TransactionHistory from "./pages/TransactionHistory.jsx";
 import ContactSupport from "./pages/ContactSupport.jsx";
 import Profile from "./pages/Profile.jsx";
+import QuotationDetails from "./pages/QuotationDetails.jsx";
+import PaymentPage from "./pages/PaymentPage.jsx";
 
 function Router() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -41,11 +43,13 @@ function Router() {
             <Route path="/cars" element={<Cars />} />
             <Route path="*" element={<NotFound />} />
             {/* <Route path="/home" element={<Home />} /> */}
-            {/* <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/dashboard/transactions" element={<TransactionHistory />} /> */}
+          {/* <Route path="/dashboard" element={<Dashboard />} /> */}
+            <Route path="/dashboard/transactions" element={<TransactionHistory />} />
             <Route path="/contact" element={<ContactSupport />} />
             {/* <Route path="/profile" element={<Profile />} /> */}
             <Route path="/servicecenters" element={<ServiceCenters />} />
+            <Route path="/dashboard/quotation/detail" element={<QuotationDetails/>}/>
+            <Route path="/dashboard/quotation/details/payment" element={<PaymentPage/>}></Route>
             
                  <Route
               path="/dashboard/request/service"
@@ -74,6 +78,7 @@ function Router() {
               path="/dashboard/request/service"
               element={<ServiceVehicleForm />}
             />
+                <Route path="/dashboard/quotation/details/payment" element={<PaymentPage/>}></Route>
 
             <Route path="/about" element={<AboutUs />} />
             <Route path="/cars/details" element={<VehicleDetails />} />
@@ -82,6 +87,7 @@ function Router() {
               path="/dashboard/transactions"
               element={<TransactionHistory />}
             />
+            <Route path="/dashboard/quotation/detail" element={<QuotationDetails/>}/>
             <Route path="/contact" element={<ContactSupport />} />
             <Route path="*" element={<NotFound />} />
             <Route path="/notify" element={<NotifyPop />} />
