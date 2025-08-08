@@ -10,6 +10,7 @@ import jakarta.persistence.Lob;
 public class VeichleDto {
 
 	private int id;
+	private int userid;
 	private String brand;
 	private String model;
 	private String variant;
@@ -43,6 +44,14 @@ public class VeichleDto {
 		this.imageurl = imageurl;
 		this.description = description;
 		this.imagedata = imagedata;
+	}
+	
+	public int getUserId() {
+		return id;
+	}
+
+	public void setUserId(int id) {
+		this.userid = id;
 	}
 
 	public int getId() {

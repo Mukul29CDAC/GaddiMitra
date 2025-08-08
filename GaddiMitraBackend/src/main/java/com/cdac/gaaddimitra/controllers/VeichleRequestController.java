@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -53,7 +54,6 @@ public class VeichleRequestController {
 		return service.totalRequests();
 	}
 	
-	// requests for a service center
 	@GetMapping("requests/getAllServiceRequests/{role}")
 	public ResponseEntity<List<VeichleRequestDto>> getServiceRequests(@PathVariable String role) {
 		List<VeichleRequestDto> veichleRequests = service.getAllServiceRequest(role);
@@ -64,8 +64,17 @@ public class VeichleRequestController {
 	}
 	
 	
-	@PatchMapping("veichleRequest/update")
-	public String updateRequest() {
-		return null;
+	@PutMapping("/request/update/{id}")
+	public String updateRequest(@PathVariable int id,@RequestBody VeichleRequestDto requestdata) {
+		service.updateRequest(requestdata, id);
+		return "Edit Succesfully";
 	}
+	
+	@DeleteMapping("/request/delete/{id}")
+	public String deleteRequestByCustomer(@PathVariable int id) {
+		service.deleteRequest(id);
+		return "deleted succesfully";
+	}
+	
+	
 }

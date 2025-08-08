@@ -18,6 +18,7 @@ import VehicleListWithFilters from "../components/layout/VehicleListWithFilters.
 import VehicleCarasouel from "../components/layout/VehicleCarasouel.jsx";
 import FeatureSection from "../components/layout/FeatureSection.jsx";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 
 
@@ -27,16 +28,14 @@ export default function Landing() {
   const [error, setError] = useState(null);
   const[mockVehicles ,setVehicles] = useState([]);
   const token = localStorage.getItem("token");
+  const navigate = useNavigate();
 
-    const { data: info } = useQuery({
-  queryKey: ["/api/vehicles"]
-  });
+ 
 
   useEffect(() => {
     const fetchVehicles = async () => {
       try {
         const response = await axios.get("http://localhost:8080/veichles/allVeichles");
-        console.log(response.data);
         setVehicles(response.data);
       } catch (err) {
         console.error("Error fetching vehicles:", err);
@@ -76,6 +75,12 @@ export default function Landing() {
     
     return matchesSearch && matchesPrice && matchesFilters;
   });
+
+    const handleVehicleClick = (vehicle) => {
+    navigate("/cars/details", {
+      state: { vehicle },
+    });
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -196,7 +201,7 @@ export default function Landing() {
                     <span className="text-2xl font-bold text-orange-600">
                       ₹{(parseInt(vehicle.price) / 100000).toFixed(1)}L
                     </span>
-                    <Button size="sm">View Details</Button>
+                    <Button size="sm"  onClick={() => handleVehicleClick(vehicle)}>View Details</Button>
                   </div>
                 </CardContent>
               </Card>

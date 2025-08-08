@@ -46,7 +46,7 @@ export default function Footer() {
             <h3 className="font-semibold text-lg mb-4"><Link to="/contact" className="text-gray-400 hover:text-white">Contact Us</Link></h3>
             <ul className="space-y-2">
                
-              <li><span className="text-gray-400">support@gaaddimitra.com</span></li>
+              <li><span className="text-gray-400">gaaddimitra@gmail.com</span></li>
               <li><span className="text-gray-400">+91 1800-123-4567</span></li>
               <li><span className="text-gray-400">Mon-Fri: 9AM-6PM</span></li>
             </ul>

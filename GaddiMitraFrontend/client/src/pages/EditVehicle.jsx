@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import Header from "../components/layout/header";
+import { useAuth } from "../context/AuthContext";
 
 export default function EditVehicle() {
   const location = useLocation();
@@ -38,7 +39,7 @@ export default function EditVehicle() {
   const handleUpdate = async (e) => {
     e.preventDefault();
     try {
-      await axios.put(`http://localhost:8080/vehicles/update/${vehicle.id}`, vehicle,{
+      await axios.put(`http://localhost:8080/vehicles/update/${vehicleData.id}`, vehicle,{
         headers: {
           "Authorization": `Bearer ${token}` 
         }});

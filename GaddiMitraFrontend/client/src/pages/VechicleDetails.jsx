@@ -76,8 +76,9 @@ const FeatureItem = ({ children }) => (
 );
 
 export default function VehicleDetails() {
-  const { state } = useLocation();
+  const location = useLocation();
   const vehicle = scorpioNData;
+
 
   return (
     <>
@@ -88,7 +89,7 @@ export default function VehicleDetails() {
           <div className="bg-white rounded-3xl shadow-2xl p-8 md:p-12 flex flex-col md:flex-row items-center gap-10 lg:gap-16">
             <div className="md:w-3/5">
               <img
-                src={vehicle.image}
+                src={ vehicle.image}
                 alt={vehicle.name}
                 className="w-full h-auto rounded-xl shadow-2xl object-cover"
               />

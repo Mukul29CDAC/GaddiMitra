@@ -48,11 +48,12 @@ public class VeichleRequestServiceImpl{
 		}
 		BeanUtils.copyProperties(req, vec);
 		repoRequest.save(vec);
-//		publisher.publish(vec);
 		
 	}
-
-
+	
+	public void deleteRequest(int id) {
+		repoRequest.deleteById(id);
+	}
 
 
     public List<VeichleRequestDto> allRequests(int id) {
@@ -94,6 +95,18 @@ public class VeichleRequestServiceImpl{
 		}
 		return listDto;
 	}
+	
+	public void updateRequest(VeichleRequestDto dto,int id) {
+		Optional<VeichleRequest> request = repoRequest.findById(id);
+		VeichleRequest req = request.get();
+			req.setBrand(dto.getBrand());
+	        req.setDescription(dto.getDescription());
+	        req.setModel(dto.getModel());
+	        req.setVeichletype(dto.getVeichletype());
+	        req.setRequesttype(dto.getRequesttype());
+	        
+	        repoRequest.save(req);
+	}
 
 	
 	public void updateRequestStatus(int id) {
@@ -103,10 +116,11 @@ public class VeichleRequestServiceImpl{
 		req.setStatus("READ");
 		
 	}
+
 	public long totalRequests() {
 		// TODO Auto-generated method stub
-		return repoRequest.count();
-		
+		return 0;
 	}
+
 
 }

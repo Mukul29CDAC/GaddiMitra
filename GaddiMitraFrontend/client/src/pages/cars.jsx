@@ -72,6 +72,7 @@ export default function Cars() {
   });
 
   const navigate = useNavigate();
+  
   const handleVehicleClick = (vehicle) => {
     navigate("/cars/details", {
       state: { vehicle },

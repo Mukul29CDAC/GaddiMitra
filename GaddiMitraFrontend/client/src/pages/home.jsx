@@ -56,7 +56,7 @@ export default function Home() {
               </Badge>
             </div>
             <Button asChild>
-              <a href="/dashboard">Go to Dashboard</a>
+              <Link to="/dashboard">Go to Dashboard</Link>
             </Button>
           </div>
         </div>

@@ -9,7 +9,7 @@ export default function RequestDetails() {
   const navigate = useNavigate();
   const request = location.state;
 
-  const { user ,token} = useAuth();
+  const { user, token } = useAuth();
 
   useEffect(() => {
     if (!request) navigate("/dashboard");
@@ -21,17 +21,14 @@ export default function RequestDetails() {
     try {
       const response = await axios.post(
         "http://localhost:8080/request/decline",
-         {
+        {
           headers: {
-            "Content-Type": "multipart/form-data",
-            // Corrected line: Provide the token as the value for the Authorization header
-            "Authorization": `Bearer ${token}` 
-          }
+            Authorization: `Bearer ${token}`,
+          },
         },
         {
           requestId: request.request?.requestid,
           customerId: request.request?.customerid,
-          // notificationId: request.notificationid,
           reason: "Request declined by service center.",
         }
       );
@@ -41,6 +38,23 @@ export default function RequestDetails() {
     } catch (error) {
       alert("Failed to decline request.");
     }
+  };
+
+  const handleDeleteForCustomer = () => {
+    axios
+      .delete(`http://localhost:8080/request/delete/${request.requestid}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((response) => {
+        navigate("/dashboard");
+        alert("Deleted Succesfully");
+        
+      })
+      .catch((error) => {
+        alert("error occured");
+      });
   };
 
   return (
@@ -105,7 +119,10 @@ export default function RequestDetails() {
           )}
 
           {user.role === "customer" ? (
-            <button className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">
+            <button
+              className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
+              onClick={() => handleDeleteForCustomer()}
+            >
               Delete Request
             </button>
           ) : (
@@ -134,7 +151,8 @@ export default function RequestDetails() {
               Call Customer
             </button>
           ) : (
-            <button className="bg-indigo-500 text-white px-4 py-2 rounded hover:bg-red-700">
+            <button className="bg-indigo-500 text-white px-4 py-2 rounded hover:bg-red-700"
+             onClick={() => navigate("/dashboard/request/edit",{state:request},)}>
               Edit Request
             </button>
           )}

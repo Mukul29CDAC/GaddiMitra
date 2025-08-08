@@ -63,7 +63,7 @@ public class Veichles {
 	
 	@ManyToOne
 	@JoinColumn(name = "userid",insertable=false, updatable=false) // Foreign key in notification table
-	private Dealer dealer;
+	private Users dealer;
 
 	public Veichles() {
 		super();
@@ -89,7 +89,16 @@ public class Veichles {
 		this.imagedata = imagedata;
 		this.userid = userid;
 	}
+	
+	
+	public Users getDealer() {
+		return dealer;
+	}
 
+	public void setDealer(Users users) {
+		this.dealer = users;
+	}
+	
 	public int getId() {
 		return id;
 	}

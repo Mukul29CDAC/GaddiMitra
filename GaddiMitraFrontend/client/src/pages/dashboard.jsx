@@ -43,15 +43,8 @@ export default function Dashboard() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        if (user?.role === "customer" || user?.role === "servicecenter") {
-          const response = await axios.get(
-            `http://localhost:8080/requests/getAllServiceRequests/${user?.role}`
-            , {
-              headers: {
-                "Authorization": `Bearer ${token}`
-              },
-            }
-          );
+        if (user?.role === "customer") {
+         
           const customerRequest = await axios.get(
             `http://localhost:8080/requests/showallrequests/${user?.userid}`
             , {
@@ -70,8 +63,18 @@ export default function Dashboard() {
           );
           setQuotation(Array.isArray(customerQuotation.data) ? customerQuotation.data : []);
           setRequests(Array.isArray(customerRequest.data) ? customerRequest.data : []);
-          setRequests(Array.isArray(response.data) ? response.data : []);
-        } else {
+        
+        } else if(user.role == "servicecenter"){
+           const response = await axios.get(
+            `http://localhost:8080/requests/getAllServiceRequests/${user?.role}`
+            , {
+              headers: {
+                "Authorization": `Bearer ${token}`
+              },
+            }
+          );
+            setRequests(Array.isArray(response.data) ? response.data : []);
+        }else {
           const vehiclesRes = await axios.get(
             `http://localhost:8080/veichles/allVeichles/${user.userid}`,
             {
@@ -83,7 +86,7 @@ export default function Dashboard() {
             }
           );
           const customerQuotation = await axios.get(
-            `http://localhost:8080/quotation/allQuotation/${user?.userid}/${user?.role}`
+            `http://localhost:8080/quotations/allQuotation/${user?.userid}/${user?.role}`
             , {
               headers: {
                 "Authorization": `Bearer ${token}`
@@ -114,7 +117,7 @@ export default function Dashboard() {
   };
 
   const handleEdit = (vec) => {
-    navigate("/dashboard/vehicles/edit", { state: vec });
+    navigate("/dashboard/vehicles/edit", { state: vec },);
   };
 
   const handleDelete = async (vehicleId) => {
@@ -386,11 +389,11 @@ export default function Dashboard() {
                               ₹{(parseFloat(vehicle.price) / 100000).toFixed(1)}L
                             </p>
                           </div>
-                          <Badge
+                          {/* <Badge
                             variant={vehicle.isActive ? "default" : "secondary"}
                           >
                             {vehicle.isActive ? "Active" : "Inactive"}
-                          </Badge>
+                          </Badge> */}
                           <div className="space-x-2">
                             <button
                               onClick={() => handleEdit(vehicle)}

@@ -1,6 +1,7 @@
 package com.cdac.gaaddimitra.servicesimpl;
 
 import java.io.IOException;
+
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Iterator;
@@ -12,8 +13,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.cdac.gaaddimitra.entities.Users;
 import com.cdac.gaaddimitra.entities.Veichles;
 import com.cdac.gaaddimitra.entitiesDTO.VeichleDto;
+//import com.cdac.gaaddimitra.helpers.VehicleMapper;
+import com.cdac.gaaddimitra.repository.UserRepository;
 import com.cdac.gaaddimitra.repository.VeichleRepo;
 import com.cdac.gaaddimitra.services.VeichleServiceIntf;
 
@@ -24,6 +28,8 @@ public class VeichleServiceImpl {
 	@Autowired
 	VeichleRepo repoVeichle;
 	
+	@Autowired
+	UserRepository userRepo;
 
 	
 	public void addVeichle(VeichleDto obj,MultipartFile image,int id) {
@@ -82,20 +88,13 @@ public class VeichleServiceImpl {
 	    return dtoList;
 	}
 
-
-
 	public int totalVeichle() {
 		return (int) repoVeichle.count();
 	}
 
 	public void deleteVeichle(int id) {
-		// TODO Auto-generated method stub
 		Optional<Veichles> vec = repoVeichle.findById(id);
-		
-		
 		repoVeichle.delete(vec.get());
-		
-		
 	}
 	
 	public VeichleDto getVeichleDetails(int id) {
@@ -106,9 +105,7 @@ public class VeichleServiceImpl {
 	    }
 		
 		Veichles veichle = veichleOpt.get();
-		
 		VeichleDto vech = new VeichleDto();
-		
 		BeanUtils.copyProperties(veichle, vech);
 
         if (veichle.getImagedata() != null) {
@@ -116,5 +113,27 @@ public class VeichleServiceImpl {
         }
         
         return vech;
+	}
+	
+	public void editVehicle(VeichleDto veichle,int id) {
+		
+		Optional<Veichles> veichleData = repoVeichle.findById(id);
+		Veichles veh = veichleData.get();
+		if (!veichleData.isPresent()) {
+	        throw new RuntimeException("Vehicle not found with id: " + veichle.getId());
+	    }
+		
+		veh.setId(veichle.getId());
+		veh.setBrand(veichle.getBrand());
+		veh.setModel(veichle.getModel());
+		veh.setVariant(veichle.getVariant());
+		veh.setYear(veichle.getYear());
+		veh.setFueltype(veichle.getFueltype());
+		veh.setTransmission(veichle.getTransmission());
+		veh.setBodytype(veichle.getBodytype());
+		veh.setPrice(veichle.getPrice());
+		
+		repoVeichle.save(veh);
+		
 	}
 }

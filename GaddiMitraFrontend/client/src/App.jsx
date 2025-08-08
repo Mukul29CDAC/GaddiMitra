@@ -31,9 +31,10 @@ import Profile from "./pages/Profile.jsx";
 import QuotationDetails from "./pages/QuotationDetails.jsx";
 import PaymentPage from "./pages/PaymentPage.jsx";
 import ServiceCenterDetail from "./pages/ServiceCenterDetail.jsx";
+import EditVehicleRequest from "./pages/EditVehicleRequest.jsx";
 
 function Router() {
-  const { isAuthenticated, isLoading ,token} = useAuth();
+  const { isAuthenticated, isLoading, token, user } = useAuth();
 
   return (
     <BrowserRouter>
@@ -43,17 +44,23 @@ function Router() {
             <Route path="/" element={<Landing />} />
             <Route path="/cars" element={<Cars />} />
             <Route path="*" element={<NotFound />} />
-                    </>
+          </>
         ) : (
           <>
             <Route path="/" element={<Landing />} />
-            <Route path="/cars" element={<Cars />} />
             <Route path="/home" element={<Home />} />
-            {/* <Route path="/login" element={<LoginModal />}/> */}
-            <Route path="/servicecenters" element={<ServiceCenters />} />
             <Route path="/dashboard" element={<Dashboard />} />
+
+            <Route path="/cars" element={<Cars />} />
+            <Route path="/servicecenters" element={<ServiceCenters />} />
+            <Route
+              path="/dashboard/request/service"
+              element={<ServiceVehicleForm />}
+            />
+
             <Route path="/dashboard/vehicles/add" element={<AddVehicle />} />
             <Route path="/dashboard/vehicles/edit" element={<EditVehicle />} />
+
             <Route
               path="/dashboard/request/details"
               element={<RequestDetails />}
@@ -62,12 +69,15 @@ function Router() {
               path="/dashboard/send-quotation"
               element={<SendQuotationForm />}
             />
+
             <Route
-              path="/dashboard/request/service"
-              element={<ServiceVehicleForm />}
-            />
-                <Route path="/dashboard/quotation/details/payment" element={<PaymentPage/>}></Route>
-                <Route path="/servicenter/details" element={<ServiceCenterDetail/>}></Route>
+              path="/dashboard/quotation/details/payment"
+              element={<PaymentPage />}
+            ></Route>
+            <Route
+              path="/servicenter/details"
+              element={<ServiceCenterDetail />}
+            ></Route>
 
             <Route path="/about" element={<AboutUs />} />
             <Route path="/cars/details" element={<VehicleDetails />} />
@@ -76,10 +86,15 @@ function Router() {
               path="/dashboard/transactions"
               element={<TransactionHistory />}
             />
-            <Route path="/dashboard/quotation/detail" element={<QuotationDetails/>}/>
+            <Route
+              path="/dashboard/quotation/detail"
+              element={<QuotationDetails />}
+            />
             <Route path="/contact" element={<ContactSupport />} />
             <Route path="*" element={<NotFound />} />
             <Route path="/notify" element={<NotifyPop />} />
+
+            <Route path="/dashboard/request/edit" element={<EditVehicleRequest/>}/>
           </>
         )}
       </Routes>
